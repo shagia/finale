@@ -8,7 +8,7 @@ Finale is an early development streamer for the Jellyfin Media Server. It's in a
 
 - `cd` into the project
 
-- Make a folder in `/constants/secrets` and add the two following files:
+- Make the folder in `/constants/secrets` and add the two following files:
 
 ```ts
 //  auth-headers.tsx
