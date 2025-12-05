@@ -1,5 +1,6 @@
 import { Text, View, Image } from "react-native";
-import { getAudioPlayerState } from "@/scripts/services/audio-service";
+import { getAudioPlayer } from "@/scripts/services/audio-service";
+import { useGlobalAudioPlayerStatus } from "@/hooks/useGlobalAudioPlayerStatus";
 import { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import MarqueeText from "@/components/MarqueeText";
 
@@ -10,7 +11,8 @@ interface NowPlayingWidgetProps {
 
 // TODO: The metadata should also be imported instead of fetched as a prop
 export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
-  const status = getAudioPlayerState();
+  const player = getAudioPlayer();
+  const status = useGlobalAudioPlayerStatus(player);
   console.log(status);
   console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
   console.log(metadata);

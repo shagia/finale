@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Text,
   ScrollView,
@@ -7,14 +7,16 @@ import {
   View,
   Alert,
   Pressable,
+  Platform,
 } from "react-native";
 import JellyfinAPI, { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import { USER_AUTH } from "@/constants/secrets/user-details";
 import MarqueeText from "@/components/MarqueeText";
-import { requestAudioPlayback } from "@/scripts/services/audio-service";
+import { requestAudioPlayback, setOnPlaybackComplete } from "@/scripts/services/audio-service";
 import { FocusedItemWidget } from "@/components/widgets/focusedItemWidget";
 import { NowPlayingWidget } from "@/components/widgets/nowPlayingWidget";
-import { AudioStatus } from "expo-audio";
+import { useQueue } from "@/hooks/useQueue";
+import { usePlaybackCompletion } from "@/hooks/usePlaybackCompletion";
 
 export default function Index() {
   const [publicURL, setPublicURL] = useState<string | null>(null);
@@ -23,6 +25,21 @@ export default function Index() {
   const [focusedItem, setFocusedItem] = useState<JellyfinItem | null>(null);
   const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
   const [itemOverview, setItemOverview] = useState<string | null>(null);
+  
+  // Queue management
+  const {
+    queue,
+    currentTrack,
+    setQueueItems,
+    advanceToNext,
+    goToPrevious,
+    hasPrevious,
+    hasNext,
+    isQueueFinished,
+  } = useQueue();
+  
+  // Monitor playback completion
+  usePlaybackCompletion();
 
   const createTwoButtonAlert = () =>
     Alert.alert("Alert Title", "My Alert Msg", [
@@ -87,11 +104,92 @@ export default function Index() {
     fetchData();
   }, []);
 
+  /**
+   * Play a track from the queue by its index
+   */
+  const playTrack = useCallback(async (track: JellyfinItem) => {
+    if (!track) return;
+    
+    // Play the track
+    const audioUrl = `http://yuji:8096/Audio/${track.Id}/stream.mp3`;
+    await requestAudioPlayback(audioUrl);
+    
+    console.log(`Playing track: ${track.Name} (${track.Id})`);
+  }, []);
+
+  /**
+   * Handle playback completion - advance to next track
+   */
+  const handlePlaybackComplete = useCallback(async () => {
+    if (isQueueFinished()) {
+      console.log('Queue finished');
+      return;
+    }
+    
+    const nextTrack = advanceToNext();
+    if (nextTrack) {
+      await playTrack(nextTrack);
+    }
+  }, [isQueueFinished, advanceToNext, playTrack]);
+
+  /**
+   * Go to the previous track in the queue
+   */
+  const handlePreviousTrack = useCallback(async () => {
+    if (!hasPrevious()) {
+      console.log('No previous track available');
+      return;
+    }
+    
+    const previousTrack = goToPrevious();
+    if (previousTrack) {
+      await playTrack(previousTrack);
+    }
+  }, [hasPrevious, goToPrevious, playTrack]);
+
+  /**
+   * Go to the next track in the queue
+   */
+  const handleNextTrack = useCallback(async () => {
+    if (!hasNext()) {
+      console.log('No next track available');
+      return;
+    }
+    
+    const nextTrack = advanceToNext();
+    if (nextTrack) {
+      await playTrack(nextTrack);
+    }
+  }, [hasNext, advanceToNext, playTrack]);
+
+  /**
+   * Set up playback completion callback
+   */
+  useEffect(() => {
+    setOnPlaybackComplete(handlePlaybackComplete);
+    
+    return () => {
+      setOnPlaybackComplete(null);
+    };
+  }, [handlePlaybackComplete]);
+
+  /**
+   * Update metadata when current track changes
+   */
+  useEffect(() => {
+    if (currentTrack) {
+      setAudioMetadata(currentTrack);
+      // Update overview when track changes
+      getItemOverview(currentTrack.AlbumId).then(setItemOverview);
+    }
+  }, [currentTrack]);
+
   return (
     <>
       <ScrollView
         focusable={true}
         hasTVPreferredFocus
+        nestedScrollEnabled={Platform.isTV}
         contentContainerStyle={{
           flexGrow: 1,
           flexDirection: "row",
@@ -118,22 +216,18 @@ export default function Index() {
               const albumItems = await jellyfinApi.getAllAlbumItems(item.Id);
               console.log(`Pressed Album: ${item.Name} with ID: ${item.Id}`);
               console.log("Album Items:", albumItems);
-              console.log("First Album Item ID:", albumItems.Items[0].Id);
-              setAudioMetadata(albumItems.Items[0]);
-              console.log("Audio Metadata:", audioMetadata);
-              const itemOverviewRaw = await getItemOverview(
-                albumItems.Items[0].AlbumId
-              ); // Right now, this gets the overview for the first item in the album, and then it gets the parent or album ID that it belongs to. Not good, but it's a start.
-              setItemOverview(itemOverviewRaw);
-
-              console.log("Item Overview Text: " + itemOverviewRaw);
-              // TODO: This is a static URL. We need to get the actual audio URL from the Jellyfin API by concatinating the base URL, the item ID and the stream.
-              await requestAudioPlayback(
-                `http://yuji:8096/Audio/${albumItems.Items[0].Id}/stream.mp3`
-              );
+              
+              // Create queue from all album items
+              setQueueItems(albumItems.Items);
+              
+              // Play the first track in the queue
+              if (albumItems.Items.length > 0) {
+                await playTrack(albumItems.Items[0]);
+              }
+              
               Alert.alert(
                 "Item Pressed",
-                `You pressed on ${item.Name}, ${item.Id}`
+                `You pressed on ${item.Name}, ${item.Id}. Queue created with ${albumItems.Items.length} tracks.`
               );
             }}
             onLongPress={() => {
@@ -191,7 +285,7 @@ export default function Index() {
               />
               <View style={{ paddingTop: 10 }}>
                 <MarqueeText
-                  text={item.AlbumArtist}
+                  text={item.AlbumArtist || "Unknown Artist"}
                   isFocused={focusedItem?.Id === item.Id}
                   width={250}
                   style={{
