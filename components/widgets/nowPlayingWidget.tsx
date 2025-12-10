@@ -1,8 +1,9 @@
-import { Text, View, Image } from "react-native";
+import { Text, View, Image, Pressable, TouchableOpacity } from "react-native";
 import { getAudioPlayer } from "@/scripts/services/audio-service";
 import { useGlobalAudioPlayerStatus } from "@/hooks/useGlobalAudioPlayerStatus";
 import { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import MarqueeText from "@/components/MarqueeText";
+import { useQueue } from "@/hooks/useQueue";
 
 import { getMinute, getRoundedMinute, getSecond } from "@/scripts/helpers/getMinuteValue";
 interface NowPlayingWidgetProps {
@@ -13,6 +14,7 @@ interface NowPlayingWidgetProps {
 export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
   const player = getAudioPlayer();
   const status = useGlobalAudioPlayerStatus(player);
+  const { advanceToNext } = useQueue();
   console.log(status);
   console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
   console.log(metadata);
@@ -57,9 +59,30 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
                     color: "black",}}
                 />
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
             <Text>{`${getRoundedMinute(status?.currentTime || 0)}`}</Text>
-            <Text>{status?.playing ? "Playing" : "Stopped"}</Text>
+            <TouchableOpacity onPress={() => {
+              if (status?.playing) {
+                player?.pause();
+              } else {
+                player?.play();
+              }
+            }}>
+            <Image 
+              style={{ width: 30, height: 30 }}
+              source={{
+              uri: `https://placehold.co/30x30?text=${status?.playing ? "⏹︎" : "▶"}&font=source-sans-pro`
+            }} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+              advanceToNext();
+            }}>
+            <Image 
+              style={{ width: 30, height: 30 }}
+              source={{
+              uri: `https://placehold.co/30x30?text=Nextfont=source-sans-pro`
+            }} />
+            </TouchableOpacity>
             <Text>{`${getRoundedMinute(status?.duration || 0)}`}</Text>
         </View>
       </View>
