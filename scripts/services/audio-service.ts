@@ -44,8 +44,45 @@ export const requestAudioPlayback = async (url: string) => {
     // Replace the source with the new URL
     globalPlayer.replace({ uri: url+'?static=true' });
     
+    // On tvOS/iOS, we need to wait for the source to load before playing
+    const waitForSourceReady = (): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const maxAttempts = 50; // 5 seconds max wait (50 * 100ms)
+        let attempts = 0;
+        
+        const checkStatus = () => {
+          attempts++;
+          
+          if (!globalPlayer) {
+            reject(new Error('Audio player was null during source loading'));
+            return;
+          }
+          
+          // Source is ready when isLoaded is true or duration is available (> 0)
+          if (globalPlayer.isLoaded || globalPlayer.duration > 0) {
+            resolve();
+            return;
+          }
+          
+          if (attempts >= maxAttempts) {
+            reject(new Error('Timeout waiting for audio source to load'));
+            return;
+          }
+          
+          // Check again after a short delay
+          setTimeout(checkStatus, 100);
+        };
+        
+        // Start checking immediately
+        checkStatus();
+      });
+    };
+    
+    // Wait for source to be ready before playing
+    await waitForSourceReady();
+    
     // Play the new audio
-    await globalPlayer.play();
+    globalPlayer.play();
     
     console.log(`Playing audio from URL: ${url}`);
   } catch (error) {
