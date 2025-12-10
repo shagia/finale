@@ -15,6 +15,7 @@ import MarqueeText from "@/components/MarqueeText";
 import { requestAudioPlayback, setOnPlaybackComplete } from "@/scripts/services/audio-service";
 import { FocusedItemWidget } from "@/components/widgets/focusedItemWidget";
 import { NowPlayingWidget } from "@/components/widgets/nowPlayingWidget";
+import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
 import { useQueue } from "@/hooks/useQueue";
 import { usePlaybackCompletion } from "@/hooks/usePlaybackCompletion";
 
@@ -314,37 +315,22 @@ export default function Index() {
           flexDirection: "row",
           bottom: 50,
           width: "100%",
-          justifyContent: "space-between",
           alignItems: "center",
-          gap: 50,
           paddingLeft: 50,
           paddingRight: 50,
         }}
       >
-        <FocusedItemWidget focusedItem={focusedItem} loading={loading} />
-
-        <View
-          style={{
-            position: "fixed",
-            backgroundColor: "lightgray",
-            left: "30%",
-            width: 600,
-            flexWrap: "wrap",
-            flexShrink: 1,
-          }}
-        >
-          <Text style={{ color: "black" }}>
-            {itemOverview
-              ? itemOverview
-              : "No overview is available for " +
-                audioMetadata?.Name +
-                ". Fill out the overview for " +
-                audioMetadata?.Name +
-                " in the Jellyfin web interface to see it here."}
-          </Text>
-          {/* If the current itemOverview exists no matter what, it'll show what title that's currently playing. Otherwise, it'll null out, and it'll show the placeholder text. */}
+        <View style={{ flex: 1 }}>
+          <FocusedItemWidget focusedItem={focusedItem} loading={loading} />
         </View>
-        <NowPlayingWidget metadata={audioMetadata} />
+
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <AlbumOverviewWidget itemOverview={itemOverview} audioMetadata={audioMetadata} />
+        </View>
+        
+        <View style={{ flex: 1, alignItems: "flex-end" }}>
+          <NowPlayingWidget metadata={audioMetadata} />
+        </View>
       </View>
     </>
   );
