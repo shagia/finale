@@ -3,6 +3,8 @@ import { JellyfinItem } from '@/scripts/services/jellyfin-api';
 import { requestAudioPlayback, setOnPlaybackComplete } from '@/scripts/services/audio-service';
 import { useQueue } from '@/hooks/useQueue';
 import { usePlaybackCompletion } from '@/hooks/usePlaybackCompletion';
+import { AUTH_URL } from "@/constants/secrets/auth-headers";
+
 
 interface PlaybackContextType {
   playTrack: (track: JellyfinItem) => Promise<void>;
@@ -40,7 +42,7 @@ export default function PlaybackProvider({ children }: { children: React.ReactNo
     if (!track) return;
     
     // Play the track
-    const audioUrl = `http://yuji:8096/Audio/${track.Id}/stream.mp3`;
+    const audioUrl = `${AUTH_URL}/Audio/${track.Id}/stream.mp3`;
     await requestAudioPlayback(audioUrl);
     
     console.log(`Playing track: ${track.Name} (${track.Id})`);

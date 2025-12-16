@@ -4,6 +4,7 @@ import { useGlobalAudioPlayerStatus } from "@/hooks/useGlobalAudioPlayerStatus";
 import { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import MarqueeText from "@/components/MarqueeText";
 import { usePlayback } from "@/components/PlaybackProvider";
+import { AUTH_URL } from "@/constants/secrets/auth-headers";
 
 import { getMinute, getRoundedMinute, getSecond } from "@/scripts/helpers/getMinuteValue";
 interface NowPlayingWidgetProps {
@@ -23,7 +24,7 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
       <View style={{ marginRight: 10 }}>
         <Image
           source={{
-            uri: `http://yuji:8096/Items/${metadata?.AlbumId}/Images/Primary`, // Replace with base URL variable
+            uri: `${AUTH_URL}/Items/${metadata?.AlbumId}/Images/Primary`, // Replace with base URL variable
           }}
           style={{ width: 120, height: 120 }}
         />

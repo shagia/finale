@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import JellyfinAPI, { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import { USER_AUTH } from "@/constants/secrets/user-details";
+import { AUTH_URL } from "@/constants/secrets/auth-headers";
 import MarqueeText from "@/components/MarqueeText";
 import { FocusedItemWidget } from "@/components/widgets/focusedItemWidget";
 import { NowPlayingWidget } from "@/components/widgets/nowPlayingWidget";
@@ -43,7 +44,7 @@ export default function Index() {
     ]);
 
   const jellyfinApi = new JellyfinAPI({
-    baseUrl: "http://yuji:8096/",
+    baseUrl: AUTH_URL,
     username: USER_AUTH.username,
     password: USER_AUTH.password,
     // ! DO NOT USE THESE CREDENTIALS IN PRODUCTION, replace with a constants file that's ignored !
@@ -203,7 +204,7 @@ export default function Index() {
                   borderRadius: 5,
                 }}
                 source={{
-                  uri: `http://yuji:8096/Items/${item.Id}/Images/Primary`, // Replace with base URL variable
+                  uri: `${AUTH_URL}/Items/${item.Id}/Images/Primary`, // Replace with base URL variable
                 }}
               />
               <View style={{ paddingTop: 10 }}>
