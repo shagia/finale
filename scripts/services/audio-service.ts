@@ -8,6 +8,16 @@ export const setGlobalAudioPlayer = (player: ReturnType<typeof useAudioPlayer>) 
   globalPlayer = player;
 };
 
+// Callback for when playback completes
+let onPlaybackCompleteCallback: (() => void) | null = null;
+
+/**
+ * Set a callback to be called when the current track finishes playing
+ */
+export const setOnPlaybackComplete = (callback: (() => void) | null) => {
+  onPlaybackCompleteCallback = callback;
+};
+
 // Initialize audio mode globally
 export const initializeAudioMode = async () => {
   await setAudioModeAsync({
@@ -34,14 +44,56 @@ export const requestAudioPlayback = async (url: string) => {
     // Replace the source with the new URL
     globalPlayer.replace({ uri: url+'?static=true' });
     
+    // On tvOS/iOS, we need to wait for the source to load before playing
+    const waitForSourceReady = (): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const maxAttempts = 50; // 5 seconds max wait (50 * 100ms)
+        let attempts = 0;
+        
+        const checkStatus = () => {
+          attempts++;
+          
+          if (!globalPlayer) {
+            reject(new Error('Audio player was null during source loading'));
+            return;
+          }
+          
+          // Source is ready when isLoaded is true or duration is available (> 0)
+          if (globalPlayer.isLoaded || globalPlayer.duration > 0) {
+            resolve();
+            return;
+          }
+          
+          if (attempts >= maxAttempts) {
+            reject(new Error('Timeout waiting for audio source to load'));
+            return;
+          }
+          
+          // Check again after a short delay
+          setTimeout(checkStatus, 100);
+        };
+        
+        // Start checking immediately
+        checkStatus();
+      });
+    };
+    
+    // Wait for source to be ready before playing
+    await waitForSourceReady();
+    
     // Play the new audio
-    await globalPlayer.play();
+    globalPlayer.play();
     
     console.log(`Playing audio from URL: ${url}`);
   } catch (error) {
     console.error('Error requesting audio playback:', error);
   }
 }
+
+/**
+ * Get the callback for playback completion
+ */
+export const getOnPlaybackComplete = () => onPlaybackCompleteCallback;
 
 export const requestAudioPause = async () => {
   try {
@@ -58,21 +110,5 @@ export const requestAudioPause = async () => {
   }
 }
 
-
 // Export the player instance
 export const getAudioPlayer = () => globalPlayer;
-
-/**
- * Gets the current audio player status synchronously.
- * Note: This returns the current status at the time of calling, but is NOT reactive.
- * For reactive status updates in React components, use the useGlobalAudioPlayerStatus hook instead.
- * 
- * @returns The current AudioStatus object, or null if the player is not initialized.
- */
-
-export const getAudioPlayerState = (): AudioStatus | null => {
-  if (!globalPlayer) {
-    return null;
-  }
-  return useGlobalAudioPlayerStatus(globalPlayer);
-};

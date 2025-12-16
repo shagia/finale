@@ -31,7 +31,7 @@ const MarqueeText: React.FC<MarqueeTextProps> = ({ text, isFocused, style, width
       const scrollDistance = textWidthRef.current - containerWidth + ellipsisWidth + endPadding;
       
       // Create step function animation - move in discrete steps
-      const stepSize = 5; // Pixels per step
+      const stepSize = 8; // Pixels per step
       const stepDuration = 280; // Milliseconds per step
       const numSteps = Math.ceil(scrollDistance / stepSize);
       

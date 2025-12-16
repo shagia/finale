@@ -1,7 +1,10 @@
-import { Text, View, Image } from "react-native";
-import { getAudioPlayerState } from "@/scripts/services/audio-service";
+import { Text, View, Image, Pressable, TouchableOpacity } from "react-native";
+import { getAudioPlayer } from "@/scripts/services/audio-service";
+import { useGlobalAudioPlayerStatus } from "@/hooks/useGlobalAudioPlayerStatus";
 import { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import MarqueeText from "@/components/MarqueeText";
+import { usePlayback } from "@/components/PlaybackProvider";
+import { AUTH_URL } from "@/constants/secrets/auth-headers";
 
 import { getMinute, getRoundedMinute, getSecond } from "@/scripts/helpers/getMinuteValue";
 interface NowPlayingWidgetProps {
@@ -10,7 +13,9 @@ interface NowPlayingWidgetProps {
 
 // TODO: The metadata should also be imported instead of fetched as a prop
 export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
-  const status = getAudioPlayerState();
+  const player = getAudioPlayer();
+  const status = useGlobalAudioPlayerStatus(player);
+  const { handleNextTrack, handlePreviousTrack } = usePlayback();
   console.log(status);
   console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
   console.log(metadata);
@@ -19,7 +24,7 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
       <View style={{ marginRight: 10 }}>
         <Image
           source={{
-            uri: `http://yuji:8096/Items/${metadata?.AlbumId}/Images/Primary`, // Replace with base URL variable
+            uri: `${AUTH_URL}/Items/${metadata?.AlbumId}/Images/Primary`, // Replace with base URL variable
           }}
           style={{ width: 120, height: 120 }}
         />
@@ -55,9 +60,39 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
                     color: "black",}}
                 />
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
             <Text>{`${getRoundedMinute(status?.currentTime || 0)}`}</Text>
-            <Text>{status?.playing ? "Playing" : "Stopped"}</Text>
+            <TouchableOpacity onPress={() => {
+              handlePreviousTrack();
+            }}>
+            <Image 
+              style={{ width: 30, height: 30 }}
+              source={{
+              uri: `https://placehold.co/30x30?text=Nextfont=source-sans-pro`
+            }} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+              if (status?.playing) {
+                player?.pause();
+              } else {
+                player?.play();
+              }
+            }}>
+            <Image 
+              style={{ width: 30, height: 30 }}
+              source={{
+              uri: `https://placehold.co/30x30?text=${status?.playing ? "⏹︎" : "▶"}&font=source-sans-pro`
+            }} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+              handleNextTrack();
+            }}>
+            <Image 
+              style={{ width: 30, height: 30 }}
+              source={{
+              uri: `https://placehold.co/30x30?text=Nextfont=source-sans-pro`
+            }} />
+            </TouchableOpacity>
             <Text>{`${getRoundedMinute(status?.duration || 0)}`}</Text>
         </View>
       </View>

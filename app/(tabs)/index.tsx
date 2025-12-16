@@ -7,14 +7,16 @@ import {
   View,
   Alert,
   Pressable,
+  Platform,
 } from "react-native";
 import JellyfinAPI, { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import { USER_AUTH } from "@/constants/secrets/user-details";
+import { AUTH_URL } from "@/constants/secrets/auth-headers";
 import MarqueeText from "@/components/MarqueeText";
-import { requestAudioPlayback } from "@/scripts/services/audio-service";
 import { FocusedItemWidget } from "@/components/widgets/focusedItemWidget";
 import { NowPlayingWidget } from "@/components/widgets/nowPlayingWidget";
-import { AudioStatus } from "expo-audio";
+import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
+import { usePlayback } from "@/components/PlaybackProvider";
 
 export default function Index() {
   const [publicURL, setPublicURL] = useState<string | null>(null);
@@ -23,6 +25,13 @@ export default function Index() {
   const [focusedItem, setFocusedItem] = useState<JellyfinItem | null>(null);
   const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
   const [itemOverview, setItemOverview] = useState<string | null>(null);
+  
+  // Playback control functions from context
+  const {
+    playTrack,
+    setQueueItems,
+    currentTrack,
+  } = usePlayback();
 
   const createTwoButtonAlert = () =>
     Alert.alert("Alert Title", "My Alert Msg", [
@@ -35,7 +44,7 @@ export default function Index() {
     ]);
 
   const jellyfinApi = new JellyfinAPI({
-    baseUrl: "http://yuji:8096/",
+    baseUrl: AUTH_URL,
     username: USER_AUTH.username,
     password: USER_AUTH.password,
     // ! DO NOT USE THESE CREDENTIALS IN PRODUCTION, replace with a constants file that's ignored !
@@ -87,11 +96,24 @@ export default function Index() {
     fetchData();
   }, []);
 
+
+  /**
+   * Update metadata when current track changes
+   */
+  useEffect(() => {
+    if (currentTrack) {
+      setAudioMetadata(currentTrack);
+      // Update overview when track changes
+      getItemOverview(currentTrack.AlbumId).then(setItemOverview);
+    }
+  }, [currentTrack]);
+
   return (
     <>
       <ScrollView
         focusable={true}
         hasTVPreferredFocus
+        nestedScrollEnabled={Platform.isTV}
         contentContainerStyle={{
           flexGrow: 1,
           flexDirection: "row",
@@ -118,22 +140,18 @@ export default function Index() {
               const albumItems = await jellyfinApi.getAllAlbumItems(item.Id);
               console.log(`Pressed Album: ${item.Name} with ID: ${item.Id}`);
               console.log("Album Items:", albumItems);
-              console.log("First Album Item ID:", albumItems.Items[0].Id);
-              setAudioMetadata(albumItems.Items[0]);
-              console.log("Audio Metadata:", audioMetadata);
-              const itemOverviewRaw = await getItemOverview(
-                albumItems.Items[0].AlbumId
-              ); // Right now, this gets the overview for the first item in the album, and then it gets the parent or album ID that it belongs to. Not good, but it's a start.
-              setItemOverview(itemOverviewRaw);
-
-              console.log("Item Overview Text: " + itemOverviewRaw);
-              // TODO: This is a static URL. We need to get the actual audio URL from the Jellyfin API by concatinating the base URL, the item ID and the stream.
-              await requestAudioPlayback(
-                `http://yuji:8096/Audio/${albumItems.Items[0].Id}/stream.mp3`
-              );
+              
+              // Create queue from all album items
+              setQueueItems(albumItems.Items);
+              
+              // Play the first track in the queue
+              if (albumItems.Items.length > 0) {
+                await playTrack(albumItems.Items[0]);
+              }
+              
               Alert.alert(
                 "Item Pressed",
-                `You pressed on ${item.Name}, ${item.Id}`
+                `You pressed on ${item.Name}, ${item.Id}. Queue created with ${albumItems.Items.length} tracks.`
               );
             }}
             onLongPress={() => {
@@ -186,12 +204,12 @@ export default function Index() {
                   borderRadius: 5,
                 }}
                 source={{
-                  uri: `http://yuji:8096/Items/${item.Id}/Images/Primary`, // Replace with base URL variable
+                  uri: `${AUTH_URL}/Items/${item.Id}/Images/Primary`, // Replace with base URL variable
                 }}
               />
               <View style={{ paddingTop: 10 }}>
                 <MarqueeText
-                  text={item.AlbumArtist}
+                  text={item.AlbumArtist || "Unknown Artist"}
                   isFocused={focusedItem?.Id === item.Id}
                   width={250}
                   style={{
@@ -220,37 +238,22 @@ export default function Index() {
           flexDirection: "row",
           bottom: 50,
           width: "100%",
-          justifyContent: "space-between",
           alignItems: "center",
-          gap: 50,
           paddingLeft: 50,
           paddingRight: 50,
         }}
       >
-        <FocusedItemWidget focusedItem={focusedItem} loading={loading} />
-
-        <View
-          style={{
-            position: "fixed",
-            backgroundColor: "lightgray",
-            left: "30%",
-            width: 600,
-            flexWrap: "wrap",
-            flexShrink: 1,
-          }}
-        >
-          <Text style={{ color: "black" }}>
-            {itemOverview
-              ? itemOverview
-              : "No overview is available for " +
-                audioMetadata?.Name +
-                ". Fill out the overview for " +
-                audioMetadata?.Name +
-                " in the Jellyfin web interface to see it here."}
-          </Text>
-          {/* If the current itemOverview exists no matter what, it'll show what title that's currently playing. Otherwise, it'll null out, and it'll show the placeholder text. */}
+        <View style={{ flex: 1 }}>
+          <FocusedItemWidget focusedItem={focusedItem} loading={loading} />
         </View>
-        <NowPlayingWidget metadata={audioMetadata} />
+
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <AlbumOverviewWidget itemOverview={itemOverview} audioMetadata={audioMetadata} />
+        </View>
+        
+        <View style={{ flex: 1, alignItems: "flex-end" }}>
+          <NowPlayingWidget metadata={audioMetadata} />
+        </View>
       </View>
     </>
   );
