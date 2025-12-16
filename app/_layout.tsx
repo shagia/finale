@@ -7,6 +7,7 @@ import {
 import { useEffect } from 'react';
 import { Text } from 'react-native';
 import AudioPlayerProvider from '@/components/AudioPlayerProvider';
+import PlaybackProvider from '@/components/PlaybackProvider';
 
 
 // Disable reanimated warnings, may not be useful. I got it from the template project
@@ -32,9 +33,11 @@ export default function RootLayout() {
     }
   return (
     <AudioPlayerProvider>
-      <Stack>
-          <Stack.Screen name="(tabs)/index" options={{ headerShown: false }} />
-      </Stack>
+      <PlaybackProvider>
+        <Stack>
+            <Stack.Screen name="(tabs)/index" options={{ headerShown: false }} />
+        </Stack>
+      </PlaybackProvider>
     </AudioPlayerProvider>
   );
 }
