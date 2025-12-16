@@ -3,7 +3,7 @@ import { getAudioPlayer } from "@/scripts/services/audio-service";
 import { useGlobalAudioPlayerStatus } from "@/hooks/useGlobalAudioPlayerStatus";
 import { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import MarqueeText from "@/components/MarqueeText";
-import { useQueue } from "@/hooks/useQueue";
+import { usePlayback } from "@/components/PlaybackProvider";
 
 import { getMinute, getRoundedMinute, getSecond } from "@/scripts/helpers/getMinuteValue";
 interface NowPlayingWidgetProps {
@@ -14,7 +14,7 @@ interface NowPlayingWidgetProps {
 export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
   const player = getAudioPlayer();
   const status = useGlobalAudioPlayerStatus(player);
-  const { advanceToNext } = useQueue();
+  const { handleNextTrack } = usePlayback();
   console.log(status);
   console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
   console.log(metadata);
@@ -75,7 +75,7 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
             }} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => {
-              advanceToNext();
+              handleNextTrack();
             }}>
             <Image 
               style={{ width: 30, height: 30 }}
