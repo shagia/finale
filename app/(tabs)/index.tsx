@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from 'expo-router';
 import {
   Text,
   ScrollView,
@@ -25,13 +26,9 @@ export default function Index() {
   const [focusedItem, setFocusedItem] = useState<JellyfinItem | null>(null);
   const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
   const [itemOverview, setItemOverview] = useState<string | null>(null);
-  
+
   // Playback control functions from context
-  const {
-    playTrack,
-    setQueueItems,
-    currentTrack,
-  } = usePlayback();
+  const { playTrack, setQueueItems, currentTrack } = usePlayback();
 
   const createTwoButtonAlert = () =>
     Alert.alert("Alert Title", "My Alert Msg", [
@@ -96,7 +93,6 @@ export default function Index() {
     fetchData();
   }, []);
 
-
   /**
    * Update metadata when current track changes
    */
@@ -107,9 +103,42 @@ export default function Index() {
       getItemOverview(currentTrack.AlbumId).then(setItemOverview);
     }
   }, [currentTrack]);
-
+  const router = useRouter();
   return (
     <>
+      <View
+        style={{
+          backgroundColor: "#171717",
+          paddingTop: 20,
+          paddingBottom: 15,
+          paddingLeft: 140,
+          paddingRight: 140,
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <TouchableOpacity onPress={() => router.navigate('/test')}>
+        <Image
+          source={require("../../assets/images/finale-logo.png")}
+          style={{ width: 200, resizeMode: "contain" }}
+        />
+        </TouchableOpacity>
+        <Text
+          style={{
+            color: "#747474",
+            fontFamily: "SpaceMono",
+          }}
+        >
+          Explorer View
+        </Text>
+      </View>
+        <View
+          style={{
+            borderBottomColor: "#454545",
+            borderBottomWidth: 2,
+            
+          }}
+        />
       <ScrollView
         focusable={true}
         hasTVPreferredFocus
@@ -140,15 +169,15 @@ export default function Index() {
               const albumItems = await jellyfinApi.getAllAlbumItems(item.Id);
               console.log(`Pressed Album: ${item.Name} with ID: ${item.Id}`);
               console.log("Album Items:", albumItems);
-              
+
               // Create queue from all album items
               setQueueItems(albumItems.Items);
-              
+
               // Play the first track in the queue
               if (albumItems.Items.length > 0) {
                 await playTrack(albumItems.Items[0]);
               }
-              
+
               Alert.alert(
                 "Item Pressed",
                 `You pressed on ${item.Name}, ${item.Id}. Queue created with ${albumItems.Items.length} tracks.`
@@ -248,9 +277,12 @@ export default function Index() {
         </View>
 
         <View style={{ flex: 1, alignItems: "center" }}>
-          <AlbumOverviewWidget itemOverview={itemOverview} audioMetadata={audioMetadata} />
+          <AlbumOverviewWidget
+            itemOverview={itemOverview}
+            audioMetadata={audioMetadata}
+          />
         </View>
-        
+
         <View style={{ flex: 1, alignItems: "flex-end" }}>
           <NowPlayingWidget metadata={audioMetadata} />
         </View>
