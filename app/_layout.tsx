@@ -1,14 +1,13 @@
 import { Stack } from "expo-router";
-import { useFonts } from 'expo-font';
+import { useFonts } from "expo-font";
 import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
-} from 'react-native-reanimated';
-import { useEffect } from 'react';
-import { Text } from 'react-native';
-import AudioPlayerProvider from '@/components/AudioPlayerProvider';
-import PlaybackProvider from '@/components/PlaybackProvider';
-
+} from "react-native-reanimated";
+import { useEffect } from "react";
+import { Text, View } from "react-native";
+import AudioPlayerProvider from "@/components/AudioPlayerProvider";
+import PlaybackProvider from "@/components/PlaybackProvider";
 
 // Disable reanimated warnings, may not be useful. I got it from the template project
 configureReanimatedLogger({
@@ -17,27 +16,34 @@ configureReanimatedLogger({
 });
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/ibm-plex-mono/IBMPlexMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/ibm-plex-mono/IBMPlexMono-Regular.ttf"),
   });
-  
+
   useEffect(() => {
-      if (loaded || error) {
-        if (error) {
-          console.warn(`Error in loading fonts: ${error}`);
-        }
+    if (loaded || error) {
+      if (error) {
+        console.warn(`Error in loading fonts: ${error}`);
       }
-    }, [loaded, error]);
-  
-    if (!loaded && !error) {
-      return null;
     }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
   return (
-    <AudioPlayerProvider>
-      <PlaybackProvider>
-        <Stack>
-            <Stack.Screen name="(tabs)/index" options={{ headerShown: false }} />
-        </Stack>
-      </PlaybackProvider>
-    </AudioPlayerProvider>
+    <>
+      <AudioPlayerProvider>
+        <PlaybackProvider>
+          <Stack>
+            <Stack.Screen
+              name="(tabs)/index"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="(tabs)/test" options={{ headerShown: true }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </PlaybackProvider>
+      </AudioPlayerProvider>
+    </>
   );
 }
