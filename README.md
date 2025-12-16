@@ -12,6 +12,7 @@ Finale is an early development streamer for the Jellyfin Media Server. It's in a
 
 ```ts
 //  auth-headers.tsx
+export const AUTH_URL = 'your-jellyfin-url';
 export const AUTH_TOKEN = 'your-api-token';
 export const AUTH_HEADERS = {
   'Authorization': 'MediaBrowser Client="Jellyfin%20Web", Device="Firefox", DeviceId="your-device-id", Version="10.11.2", Token="' + AUTH_TOKEN + '"',
