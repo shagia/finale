@@ -16,9 +16,9 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
   const player = getAudioPlayer();
   const status = useGlobalAudioPlayerStatus(player);
   const { handleNextTrack, handlePreviousTrack } = usePlayback();
-  console.log(status);
-  console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
-  console.log(metadata);
+  //console.log(status);
+  //console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
+  //console.log(metadata);
   return (
     <View style={{ backgroundColor: "lightgray", flexDirection: "row", minWidth: 200}}>
       <View style={{ marginRight: 10 }}>
