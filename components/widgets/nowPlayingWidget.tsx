@@ -14,7 +14,7 @@ interface NowPlayingWidgetProps {
 export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
   const player = getAudioPlayer();
   const status = useGlobalAudioPlayerStatus(player);
-  const { handleNextTrack } = usePlayback();
+  const { handleNextTrack, handlePreviousTrack } = usePlayback();
   console.log(status);
   console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
   console.log(metadata);
@@ -61,6 +61,15 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
         </View>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
             <Text>{`${getRoundedMinute(status?.currentTime || 0)}`}</Text>
+            <TouchableOpacity onPress={() => {
+              handlePreviousTrack();
+            }}>
+            <Image 
+              style={{ width: 30, height: 30 }}
+              source={{
+              uri: `https://placehold.co/30x30?text=Nextfont=source-sans-pro`
+            }} />
+            </TouchableOpacity>
             <TouchableOpacity onPress={() => {
               if (status?.playing) {
                 player?.pause();
