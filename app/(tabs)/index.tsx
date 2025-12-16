@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   ScrollView,
@@ -12,12 +12,10 @@ import {
 import JellyfinAPI, { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import { USER_AUTH } from "@/constants/secrets/user-details";
 import MarqueeText from "@/components/MarqueeText";
-import { requestAudioPlayback, setOnPlaybackComplete } from "@/scripts/services/audio-service";
 import { FocusedItemWidget } from "@/components/widgets/focusedItemWidget";
 import { NowPlayingWidget } from "@/components/widgets/nowPlayingWidget";
 import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
-import { useQueue } from "@/hooks/useQueue";
-import { usePlaybackCompletion } from "@/hooks/usePlaybackCompletion";
+import { usePlayback } from "@/components/PlaybackProvider";
 
 export default function Index() {
   const [publicURL, setPublicURL] = useState<string | null>(null);
@@ -27,20 +25,12 @@ export default function Index() {
   const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
   const [itemOverview, setItemOverview] = useState<string | null>(null);
   
-  // Queue management
+  // Playback control functions from context
   const {
-    queue,
-    currentTrack,
+    playTrack,
     setQueueItems,
-    advanceToNext,
-    goToPrevious,
-    hasPrevious,
-    hasNext,
-    isQueueFinished,
-  } = useQueue();
-  
-  // Monitor playback completion
-  usePlaybackCompletion();
+    currentTrack,
+  } = usePlayback();
 
   const createTwoButtonAlert = () =>
     Alert.alert("Alert Title", "My Alert Msg", [
@@ -105,74 +95,6 @@ export default function Index() {
     fetchData();
   }, []);
 
-  /**
-   * Play a track from the queue by its index
-   */
-  const playTrack = useCallback(async (track: JellyfinItem) => {
-    if (!track) return;
-    
-    // Play the track
-    const audioUrl = `http://yuji:8096/Audio/${track.Id}/stream.mp3`;
-    await requestAudioPlayback(audioUrl);
-    
-    console.log(`Playing track: ${track.Name} (${track.Id})`);
-  }, []);
-
-  /**
-   * Handle playback completion - advance to next track
-   */
-  const handlePlaybackComplete = useCallback(async () => {
-    if (isQueueFinished()) {
-      console.log('Queue finished');
-      return;
-    }
-    
-    const nextTrack = advanceToNext();
-    if (nextTrack) {
-      await playTrack(nextTrack);
-    }
-  }, [isQueueFinished, advanceToNext, playTrack]);
-
-  /**
-   * Go to the previous track in the queue
-   */
-  const handlePreviousTrack = useCallback(async () => {
-    if (!hasPrevious()) {
-      console.log('No previous track available');
-      return;
-    }
-    
-    const previousTrack = goToPrevious();
-    if (previousTrack) {
-      await playTrack(previousTrack);
-    }
-  }, [hasPrevious, goToPrevious, playTrack]);
-
-  /**
-   * Go to the next track in the queue
-   */
-  const handleNextTrack = useCallback(async () => {
-    if (!hasNext()) {
-      console.log('No next track available');
-      return;
-    }
-    
-    const nextTrack = advanceToNext();
-    if (nextTrack) {
-      await playTrack(nextTrack);
-    }
-  }, [hasNext, advanceToNext, playTrack]);
-
-  /**
-   * Set up playback completion callback
-   */
-  useEffect(() => {
-    setOnPlaybackComplete(handlePlaybackComplete);
-    
-    return () => {
-      setOnPlaybackComplete(null);
-    };
-  }, [handlePlaybackComplete]);
 
   /**
    * Update metadata when current track changes
