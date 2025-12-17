@@ -11,8 +11,8 @@ export const AlbumOverviewWidget = ({ itemOverview, audioMetadata }: AlbumOvervi
     <View
       style={{
         width: 600,
-        height: 120,
-        maxHeight: 120,
+        height: 150,
+        maxHeight: 150,
         overflow: "scroll",
         flexWrap: "wrap",
         flexShrink: 1,

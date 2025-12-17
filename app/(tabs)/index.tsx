@@ -111,8 +111,8 @@ export default function Index() {
           backgroundColor: "#171717",
           paddingTop: 20,
           paddingBottom: 15,
-          paddingLeft: 140,
-          paddingRight: 140,
+          paddingLeft: 80,
+          paddingRight: 80,
           flexDirection: "row",
           justifyContent: "space-between",
         }}
@@ -134,8 +134,11 @@ export default function Index() {
       </View>
       <View
         style={{
+          backgroundColor: "#171717",
           borderBottomColor: "#454545",
           borderBottomWidth: 2,
+          marginLeft: 80,
+          marginRight: 80,
         }}
       />
       <ScrollView
