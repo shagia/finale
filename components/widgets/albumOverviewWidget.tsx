@@ -10,20 +10,16 @@ export const AlbumOverviewWidget = ({ itemOverview, audioMetadata }: AlbumOvervi
   return (
     <View
       style={{
-        backgroundColor: "lightgray",
         width: 600,
-        height: 100,
-        maxHeight: 100,
+        height: 120,
+        maxHeight: 120,
         overflow: "scroll",
-        padding: 10,
-        marginTop: 10,
-        marginBottom: 10,
         flexWrap: "wrap",
         flexShrink: 1,
         alignSelf: "center",
       }}
     >
-      <Text style={{ color: "black" }}>
+      <Text style={{ color: "white", fontFamily: "SpaceMono", fontSize: 16 }}>
         {itemOverview
           ? itemOverview
           : "No overview is available for " +

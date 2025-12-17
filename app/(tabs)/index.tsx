@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 import {
   Text,
   ScrollView,
@@ -117,28 +117,27 @@ export default function Index() {
           justifyContent: "space-between",
         }}
       >
-        <TouchableOpacity onPress={() => router.navigate('/test')}>
-        <Image
-          source={require("../../assets/images/finale-logo.png")}
-          style={{ width: 200, resizeMode: "contain" }}
-        />
+        <TouchableOpacity onPress={() => router.navigate("/test")}>
+          <Image
+            source={require("../../assets/images/finale-logo.png")}
+            style={{ width: 200, resizeMode: "contain" }}
+          />
         </TouchableOpacity>
         <Text
           style={{
-            color: "#747474",
+            color: "#9c9c9cff",
             fontFamily: "SpaceMono",
           }}
         >
           Explorer View
         </Text>
       </View>
-        <View
-          style={{
-            borderBottomColor: "#454545",
-            borderBottomWidth: 2,
-            
-          }}
-        />
+      <View
+        style={{
+          borderBottomColor: "#454545",
+          borderBottomWidth: 2,
+        }}
+      />
       <ScrollView
         focusable={true}
         hasTVPreferredFocus
@@ -205,7 +204,10 @@ export default function Index() {
             }}
             style={[
               {
-                padding: 15,
+                paddingLeft: 15,
+                paddingRight: 15,
+                paddingTop: 5,
+                paddingBottom: 10,
               },
               focusedItem?.Id === item.Id && {
                 backgroundColor: "Pink",
@@ -243,7 +245,7 @@ export default function Index() {
                   width={250}
                   style={{
                     fontFamily: "IBM Plex Mono",
-                    color: focusedItem?.Id === item.Id ? "black" : "white",
+                    color: focusedItem?.Id === item.Id ? "black" : "#ffffffff",
                   }}
                 />
                 <MarqueeText
@@ -252,7 +254,7 @@ export default function Index() {
                   width={250}
                   style={{
                     fontFamily: "IBM Plex Mono",
-                    color: focusedItem?.Id === item.Id ? "black" : "white",
+                    color: focusedItem?.Id === item.Id ? "black" : "#ffffffff",
                   }}
                 />
               </View>
@@ -262,30 +264,79 @@ export default function Index() {
       </ScrollView>
       <View
         style={{
-          position: "absolute",
-          display: "flex",
-          flexDirection: "row",
-          bottom: 50,
-          width: "100%",
-          alignItems: "center",
+          paddingTop: 40,
+          paddingBottom: 40,
           paddingLeft: 50,
           paddingRight: 50,
+          backgroundColor: "#171717",
+          borderTopColor: "#454545",
+          borderTopWidth: 2,
         }}
       >
-        <View style={{ flex: 1 }}>
-          <FocusedItemWidget focusedItem={focusedItem} loading={loading} />
-        </View>
+        <View
+          style={{
+            backgroundColor: "#171717",
+            position: "relative",
+            display: "flex",
+            flexDirection: "row",
+            bottom: 0,
+            width: "100%",
+            alignItems: "baseline",
+          }}
+        >
+          <View style={{ flex: 1, alignItems: "flex-start" }}>
+            <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+              <Text
+                style={{
+                  color: "#9c9c9cff",
+                  fontSize: 18,
+                  fontFamily: "SpaceMono",
+                  marginBottom: 20,
+                }}
+              >
+                Focused item
+              </Text>
+              <FocusedItemWidget focusedItem={focusedItem} loading={loading} />
+            </View>
+          </View>
 
-        <View style={{ flex: 1, alignItems: "center" }}>
-          <AlbumOverviewWidget
-            itemOverview={itemOverview}
-            audioMetadata={audioMetadata}
-          />
-        </View>
+          <View style={{ flex: 1, alignItems: "center" }}>
+            <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+              <Text
+                style={{
+                  color: "#9c9c9cff",
+                  fontSize: 18,
+                  fontFamily: "SpaceMono",
+                  marginBottom: 20,
+                }}
+              >
+                Item description
+              </Text>
+              <AlbumOverviewWidget
+                itemOverview={itemOverview}
+                audioMetadata={audioMetadata}
+              />
+            </View>
+          </View>
 
-        <View style={{ flex: 1, alignItems: "flex-end" }}>
-          <NowPlayingWidget metadata={audioMetadata} />
+          <View style={{ flex: 1, alignItems: "flex-end" }}>
+            <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+              <Text
+                style={{
+                  color: "#9c9c9cff",
+                  fontSize: 18,
+                  fontFamily: "SpaceMono",
+                  marginBottom: 20,
+                }}
+              >
+                Now playing
+              </Text>
+              <NowPlayingWidget metadata={audioMetadata} />
+            </View>
+          </View>
         </View>
+        <View style={{paddingTop: 10}}>
+          <Text style={{ color: "#9c9c9cff", fontFamily: "SpaceMono" }}>Press Left to open Finale Menu</Text></View>
       </View>
     </>
   );

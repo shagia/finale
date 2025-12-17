@@ -12,23 +12,25 @@ interface FocusedItemWidgetProps {
 
 export const FocusedItemWidget = ({ focusedItem, loading }: FocusedItemWidgetProps) => {
   return (
-    <View style={{ backgroundColor: "lightgray",
+    <View style={{
+        width: 600,
+        height: 100,
      }}>
-      <Text style={{ color: "black" }}>
+      <Text style={{ color: "white", fontFamily: "SpaceMono", fontSize: 38, fontWeight: "bold" }}>
         {loading
           ? "Loading..."
           : focusedItem
           ? focusedItem.AlbumArtist
           : "No item focused"}
       </Text>
-      <Text style={{ color: "black" }}>
+      <Text style={{ color: "white", fontFamily: "SpaceMono", fontSize: 20, }}>
         {loading
           ? "Loading..."
           : focusedItem
           ? focusedItem.Name
           : "No item focused"}
       </Text>
-      <Text style={{ color: "black" }}>
+      <Text style={{ color: "white", fontFamily: "SpaceMono", fontSize: 20,  }}>
         {loading
           ? "Loading..."
           : focusedItem

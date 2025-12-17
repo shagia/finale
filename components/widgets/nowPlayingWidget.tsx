@@ -20,13 +20,13 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
   //console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
   //console.log(metadata);
   return (
-    <View style={{ backgroundColor: "lightgray", flexDirection: "row", minWidth: 200}}>
+    <View style={{ backgroundColor: "lightgray", flexDirection: "row", minWidth: 200, height: 150}}>
       <View style={{ marginRight: 10 }}>
         <Image
           source={{
             uri: `${AUTH_URL}/Items/${metadata?.AlbumId}/Images/Primary`, // Replace with base URL variable
           }}
-          style={{ width: 120, height: 120 }}
+          style={{ width: 150, height: 150 }}
         />
       </View>
       <View
