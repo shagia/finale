@@ -34,7 +34,11 @@ export default function RootLayout() {
     <>
       <AudioPlayerProvider>
         <PlaybackProvider>
-          <Stack>
+          <Stack
+          screenOptions={{
+                    contentStyle: { backgroundColor: "#171717" },
+                }}
+>
             <Stack.Screen
               name="(tabs)/index"
               options={{ headerShown: false }}
