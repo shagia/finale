@@ -7,6 +7,7 @@ interface AlbumOverviewWidgetProps {
 }
 
 export const AlbumOverviewWidget = ({ itemOverview, audioMetadata }: AlbumOverviewWidgetProps) => {
+  console.log("Album Overview Widget: " + itemOverview);
   return (
     <View
       style={{
@@ -22,11 +23,7 @@ export const AlbumOverviewWidget = ({ itemOverview, audioMetadata }: AlbumOvervi
       <Text style={{ color: "white", fontFamily: "SpaceMono", fontSize: 16 }}>
         {itemOverview
           ? itemOverview
-          : "No overview is available for " +
-            audioMetadata?.Name +
-            ". Fill out the overview for " +
-            audioMetadata?.Name +
-            " in the Jellyfin web interface to see it here."}
+          : "No overview available."}
       </Text>
       {/* If the current itemOverview exists no matter what, it'll show what title that's currently playing. Otherwise, it'll null out, and it'll show the placeholder text. */}
     </View>
