@@ -145,7 +145,7 @@ class JellyfinAPI {
           'Authorization': `MediaBrowser Token=\"${this.authToken}\"`
         },
         params: {
-          fields: 'MediaStreams, Overview, ProductionYear, RunTimeTicks, AlbumArtist, ParentId',
+          fields: 'MediaStreams, Overview, ProductionYear, RunTimeTicks, AlbumArtist, ParentId, Name',
         }
       });
       console.log('Album Items Response:', response.data); // This is the entire response object
@@ -167,7 +167,7 @@ class JellyfinAPI {
           'Authorization': `MediaBrowser Token=\"${this.authToken}\"`
         },
         params: {
-          fields: 'MediaStreams, Overview, ProductionYear, RunTimeTicks, AlbumArtist',
+          fields: 'MediaStreams, Overview, ProductionYear, RunTimeTicks, AlbumArtist, ParentId, Name',
         }
       });
 
