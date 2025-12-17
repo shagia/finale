@@ -19,6 +19,7 @@ import { NowPlayingWidget } from "@/components/widgets/nowPlayingWidget";
 import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
 import { usePlayback } from "@/components/PlaybackProvider";
 import { getItemOverview } from "@/scripts/helpers/getItemOverview";
+import Header from "@/components/header";
 
 export default function Index() {
   const [publicURL, setPublicURL] = useState<string | null>(null);
@@ -89,41 +90,7 @@ export default function Index() {
   }, [currentTrack]);
   return (
     <>
-      <View
-        style={{
-          backgroundColor: "#171717",
-          paddingTop: 20,
-          paddingBottom: 15,
-          paddingLeft: 80,
-          paddingRight: 80,
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <TouchableOpacity onPress={() => router.navigate("/test")}>
-          <Image
-            source={require("../../assets/images/finale-logo.png")}
-            style={{ width: 200, resizeMode: "contain" }}
-          />
-        </TouchableOpacity>
-        <Text
-          style={{
-            color: "#9c9c9cff",
-            fontFamily: "SpaceMono",
-          }}
-        >
-          Explorer View
-        </Text>
-      </View>
-      <View
-        style={{
-          backgroundColor: "#171717",
-          borderBottomColor: "#454545",
-          borderBottomWidth: 2,
-          marginLeft: 80,
-          marginRight: 80,
-        }}
-      />
+      <Header />
       <ScrollView
         focusable={true}
         hasTVPreferredFocus
