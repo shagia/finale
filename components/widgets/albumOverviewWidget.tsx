@@ -7,7 +7,7 @@ interface AlbumOverviewWidgetProps {
 }
 
 export const AlbumOverviewWidget = ({ itemOverview, audioMetadata }: AlbumOverviewWidgetProps) => {
-  console.log("Album Overview Widget: " + itemOverview);
+  // console.log("Album Overview Widget: " + itemOverview);
   return (
     <View
       style={{
