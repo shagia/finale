@@ -15,6 +15,8 @@ interface PlaybackContextType {
   currentTrack: JellyfinItem | null;
   hasPrevious: () => boolean;
   hasNext: () => boolean;
+  queue: JellyfinItem[];
+  currentIndex: number;
 }
 
 const PlaybackContext = React.createContext<PlaybackContextType | null>(null);
@@ -33,6 +35,8 @@ export default function PlaybackProvider({ children }: { children: React.ReactNo
     isQueueFinished,
     setQueueItems,
     currentTrack,
+    queue,
+    currentIndex,
   } = useQueue();
 
   /**
@@ -116,6 +120,8 @@ export default function PlaybackProvider({ children }: { children: React.ReactNo
     currentTrack,
     hasPrevious,
     hasNext,
+    queue,
+    currentIndex,
   };
 
   return (

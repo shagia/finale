@@ -18,6 +18,7 @@ import { FocusedItemWidget } from "@/components/widgets/focusedItemWidget";
 import { NowPlayingWidget } from "@/components/widgets/nowPlayingWidget";
 import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
 import { usePlayback } from "@/components/PlaybackProvider";
+import { getItemOverview } from "@/scripts/helpers/getItemOverview";
 
 export default function Index() {
   const [publicURL, setPublicURL] = useState<string | null>(null);
@@ -26,6 +27,7 @@ export default function Index() {
   const [focusedItem, setFocusedItem] = useState<JellyfinItem | null>(null);
   const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
   const [itemOverview, setItemOverview] = useState<string | null>(null);
+  const router = useRouter();
 
   // Playback control functions from context
   const { playTrack, setQueueItems, currentTrack } = usePlayback();
@@ -57,24 +59,6 @@ export default function Index() {
     }
   } */ // Might just remove this, wrote it early and I think ItemInfo gets what I need for now
 
-  /**
-   * Get the overview text for any item by its ID
-   * Returns the overview string or a default message if not available
-   */
-  const getItemOverview = async (itemId: string): Promise<string> => {
-    try {
-      const item = await jellyfinApi.getItem(itemId);
-      console.log("Item Overview in getItemOverview: " + item.Id + item.Name);
-      return (
-        item.Overview ||
-        `No overview is available for ${item.Name}. Fill out the overview for ${item.Name} in the Jellyfin web interface to see it here.`
-      );
-    } catch (error) {
-      console.error(`Error fetching overview for item ${itemId}:`, error);
-      return "No overview available for " + itemId;
-    }
-  };
-
   const fetchData = async () => {
     try {
       // No need to call login() - getRandomItems() will ensure authentication automatically
@@ -98,12 +82,11 @@ export default function Index() {
    */
   useEffect(() => {
     if (currentTrack) {
-      setAudioMetadata(currentTrack);
       // Update overview when track changes
-      getItemOverview(currentTrack.AlbumId).then(setItemOverview);
+      getItemOverview(jellyfinApi, currentTrack.AlbumId).then(setItemOverview);
+      setAudioMetadata(currentTrack);
     }
   }, [currentTrack]);
-  const router = useRouter();
   return (
     <>
       <View
