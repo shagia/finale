@@ -1,4 +1,5 @@
 import { Text, View, Image, Pressable, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 import { getAudioPlayer } from "@/scripts/services/audio-service";
 import { useGlobalAudioPlayerStatus } from "@/hooks/useGlobalAudioPlayerStatus";
 import { JellyfinItem } from "@/scripts/services/jellyfin-api";
@@ -11,23 +12,26 @@ interface NowPlayingWidgetProps {
   metadata: JellyfinItem | null;
 }
 
-// TODO: The metadata should also be imported instead of fetched as a prop
+// TODO: The metadata should also be globally imported instead of fetched as a prop
 export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
   const player = getAudioPlayer();
   const status = useGlobalAudioPlayerStatus(player);
   const { handleNextTrack, handlePreviousTrack } = usePlayback();
+  const router = useRouter();
   //console.log(status);
   //console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
   //console.log(metadata);
   return (
     <View style={{ backgroundColor: "lightgray", flexDirection: "row", minWidth: 200, height: 150}}>
       <View style={{ marginRight: 10 }}>
+        <TouchableOpacity onPress={() => router.navigate("/playing")}>
         <Image
           source={{
             uri: `${AUTH_URL}/Items/${metadata?.AlbumId}/Images/Primary`, // Replace with base URL variable
           }}
           style={{ width: 150, height: 150 }}
         />
+        </TouchableOpacity>
       </View>
       <View
         style={{
