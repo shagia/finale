@@ -14,7 +14,7 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
       <View
         style={[
           page === "playing" || page === "home"
-            ? { position: "absolute", zIndex: 10, width: "100%", opacity: 1, mixBlendMode: "difference", marginTop: 3 //Temporary fix for logo mispositioning when in playing page
+            ? { position: "absolute", zIndex: 10, width: "100%", opacity: 1, mixBlendMode: "difference", marginTop: 4 //Temporary fix for logo mispositioning when in playing page
                 }
             : {},
           {
