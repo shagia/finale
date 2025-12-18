@@ -216,7 +216,6 @@ class JellyfinAPI {
           Recursive: true, 
           Limit: 25,
           SortBy: 'Random',
-          isFavorite: true,
           fields: 'MediaStreams, Overview, ProductionYear, RunTimeTicks, AlbumArtist',
         }
       });
