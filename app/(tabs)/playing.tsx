@@ -5,6 +5,7 @@ import { usePlayback } from "@/components/PlaybackProvider";
 import { AUTH_URL } from "@/constants/secrets/auth-headers";
 import { getRoundedMinute } from "@/scripts/helpers/getMinuteValue";
 import Header from "@/components/header";
+import ItemList from "@/components/ItemList";
 
 export default function PlayingPage() {
   const player = getAudioPlayer();
@@ -60,65 +61,7 @@ export default function PlayingPage() {
             >
               Queue
             </Text>
-            <ScrollView>
-              {queue?.map((track) => {
-                const isCurrent = currentTrack?.Id === track.Id;
-                return (
-                  <Pressable
-                    key={track.Id}
-                    onPress={() => {
-                      console.log(`Seeking to track: ${track.Name}`);
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        marginBottom: 10,
-                        alignItems: "center",
-                        alignContent: "center",
-                      }}
-                    >
-                      <View>
-                        <Image
-                          source={{
-                            uri: `${AUTH_URL}/Items/${track.AlbumId}/Images/Primary`, // Replace with base URL variable
-                          }}
-                          style={{ width: 60, height: 60 }}
-                        />
-                      </View>
-                      <View
-                        style={{
-                          backgroundColor: isCurrent ? "black" : "transparent",
-                          width: "70%",
-                          paddingLeft: 10,
-                          paddingTop: 8,
-                          paddingBottom: 8,
-                          borderTopRightRadius: 10,
-                          borderBottomRightRadius: 10,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: isCurrent ? "white" : "grey",
-                            fontFamily: "SpaceMono",
-                          }}
-                        >
-                          {track.AlbumArtist}
-                        </Text>
-                        <Text
-                          style={{
-                            color: isCurrent ? "white" : "grey",
-                            fontFamily: "SpaceMono",
-                          }}
-                        >
-                          {track.Name}
-                        </Text>
-                      </View>
-                    </View>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
+            <ItemList page="playing" list={queue || []} currentTrack={currentTrack} />
           </View>
         </View>
         {/* Song Details & Controller */}
