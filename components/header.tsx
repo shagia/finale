@@ -30,7 +30,7 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
         ]}
       >
         {/* TODO: Judge if the logo is a button that opens either the menu or is conditionally different based on the current page */}
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.navigate("/home")}>
           <Image
             source={require("../assets/images/finale-logo.svg")}
             style={{ width: 150, height: 10, bottom: 0, left: 0, resizeMode: "contain" }}
