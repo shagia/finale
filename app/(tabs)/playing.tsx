@@ -1,4 +1,4 @@
-import { Text, Image, View, ScrollView } from "react-native";
+import { Text, Image, View, ScrollView, Pressable } from "react-native";
 import { getAudioPlayer } from "@/scripts/services/audio-service";
 import { useGlobalAudioPlayerStatus } from "@/hooks/useGlobalAudioPlayerStatus";
 import { usePlayback } from "@/components/PlaybackProvider";
@@ -64,50 +64,58 @@ export default function PlayingPage() {
               {queue?.map((track) => {
                 const isCurrent = currentTrack?.Id === track.Id;
                 return (
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      marginBottom: 10,
-                      alignItems: "center",
-                      alignContent: "center",
-                    }}
+                  <Pressable
                     key={track.Id}
+                    onPress={() => {
+                      console.log(`Seeking to track: ${track.Name}`);
+                    }}
                   >
-                    <View>
-                      <Image
-                        source={{
-                          uri: `${AUTH_URL}/Items/${track.AlbumId}/Images/Primary`, // Replace with base URL variable
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        marginBottom: 10,
+                        alignItems: "center",
+                        alignContent: "center",
+                      }}
+                    >
+                      <View>
+                        <Image
+                          source={{
+                            uri: `${AUTH_URL}/Items/${track.AlbumId}/Images/Primary`, // Replace with base URL variable
+                          }}
+                          style={{ width: 60, height: 60 }}
+                        />
+                      </View>
+                      <View
+                        style={{
+                          backgroundColor: isCurrent ? "black" : "transparent",
+                          width: "70%",
+                          paddingLeft: 10,
+                          paddingTop: 8,
+                          paddingBottom: 8,
+                          borderTopRightRadius: 10,
+                          borderBottomRightRadius: 10,
                         }}
-                        style={{ width: 50, height: 50, marginRight: 10 }}
-                      />
+                      >
+                        <Text
+                          style={{
+                            color: isCurrent ? "white" : "grey",
+                            fontFamily: "SpaceMono",
+                          }}
+                        >
+                          {track.AlbumArtist}
+                        </Text>
+                        <Text
+                          style={{
+                            color: isCurrent ? "white" : "grey",
+                            fontFamily: "SpaceMono",
+                          }}
+                        >
+                          {track.Name}
+                        </Text>
+                      </View>
                     </View>
-                    <View>
-                      <Text
-                        style={{
-                          color: isCurrent ? "white" : "grey",
-                          fontFamily: "SpaceMono",
-                        }}
-                      >
-                        {track.AlbumArtist}
-                      </Text>
-                      <Text
-                        style={{
-                          color: isCurrent ? "white" : "grey",
-                          fontFamily: "SpaceMono",
-                        }}
-                      >
-                        {track.Name}
-                      </Text>
-                      <Text
-                        style={{
-                          color: isCurrent ? "white" : "grey",
-                          fontFamily: "SpaceMono",
-                        }}
-                      >
-                        {track.Id}
-                      </Text>
-                    </View>
-                  </View>
+                  </Pressable>
                 );
               })}
             </ScrollView>
@@ -139,7 +147,7 @@ export default function PlayingPage() {
               />
             </View>
 
-            <View>
+            <View style={{ width: "50%", }}>
               <View
                 style={{
                   position: "absolute",
@@ -197,9 +205,69 @@ export default function PlayingPage() {
               </View>
             </View>
 
-            <Text style={{ color: "white" }}>
-              {status?.playing ? "Playing" : "Paused"}
-            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "30%",
+                bottom: "15%"
+              }}
+            >
+              <Pressable
+                onPress={() => {
+                  handlePreviousTrack();
+                }}
+                style={{
+                    width: 100, height: 100,
+                }}
+              >
+                <Image
+                  style={{ width: "100%", height: "100%" }}
+                  source={{
+                    uri: `https://placehold.co/30x30?text=Nextfont=source-sans-pro`,
+                  }}
+                />
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  if (status?.playing) {
+                    player?.pause();
+                  } else {
+                    player?.play();
+                  }
+                  
+                }}
+
+                style={{
+                    width: 100, height: 100,
+                }}
+              >
+                <Image
+                  style={{ width: "100%", height: "100%" }}
+                  source={{
+                    uri: `https://placehold.co/30x30?text=${
+                      status?.playing ? "⏹︎" : "▶"
+                    }&font=source-sans-pro`,
+                  }}
+                />
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  handleNextTrack();
+                }}
+                style={{
+                    width: 100, height: 100,
+                }}
+              >
+                <Image
+                  style={{ width: "100%", height: "100%" }}
+                  source={{
+                    uri: `https://placehold.co/30x30?text=Nextfont=source-sans-pro`,
+                  }}
+                />
+              </Pressable>
+            </View>
           </View>
         </View>
       </View>
