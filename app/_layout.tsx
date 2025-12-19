@@ -6,7 +6,7 @@ import {
 } from "react-native-reanimated";
 import { Drawer } from "react-native-drawer-layout";
 import { useEffect } from "react";
-import { Pressable, Text, TouchableOpacity, Image, View } from "react-native";
+import { Platform, Pressable, Text, TouchableOpacity, Image, View } from "react-native";
 import AudioPlayerProvider from "@/components/AudioPlayerProvider";
 import PlaybackProvider from "@/components/PlaybackProvider";
 import DrawerProvider, { useDrawer } from "@/components/DrawerProvider";
@@ -42,6 +42,7 @@ function DrawerContent() {
       open={open}
       onOpen={openDrawer}
       onClose={closeDrawer}
+      keyboardDismissMode="none"
       drawerStyle={{
         backgroundColor: "#171717",
         borderRightWidth: 1,
@@ -67,8 +68,8 @@ function DrawerContent() {
                 />
               </View>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <Text style={{ color: "#3C3C3C", fontFamily: "SpaceMono" }}>Version</Text>
-                <Text style={{ color: "#3C3C3C", fontFamily: "SpaceMono" }}>Arch</Text>
+                <Text style={{ color: "#3C3C3C", fontFamily: "SpaceMono" }}>build 0.1-digitaldash</Text>
+                <Text style={{ color: "#3C3C3C", fontFamily: "SpaceMono" }}>{Platform ? Platform.OS + " " + Platform.Version : "Unknown"}</Text>
               </View>
             </View>
             <Pressable

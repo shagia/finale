@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Pressable } from "react-native";
 import { useDrawer } from "./DrawerProvider";
 
 interface HeaderProps {
@@ -16,8 +16,14 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
       <View
         style={[
           page === "playing" || page === "home"
-            ? { position: "absolute", zIndex: 10, width: "100%", opacity: 1, mixBlendMode: "difference", marginTop: 4 //Temporary fix for logo mispositioning when in playing page
-                }
+            ? {
+                position: "absolute",
+                zIndex: 10,
+                width: "100%",
+                opacity: 1,
+                mixBlendMode: "difference",
+                marginTop: 4, //Temporary fix for logo mispositioning when in playing page
+              }
             : {},
           {
             backgroundColor: "transparent",
@@ -32,12 +38,26 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
         ]}
       >
         {/* TODO: Judge if the logo is a button that opens either the menu or is conditionally different based on the current page */}
-        <TouchableOpacity onPress={() => openDrawer()}>
-          <Image
-            source={require("../assets/images/finale-logo.svg")}
-            style={{ width: 150, height: 10, bottom: 0, left: 0, resizeMode: "contain" }}
-          />
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 20}}>
+          {/* <Pressable onPress={() => router.back()}>
+            <Text style={{ color: "#3C3C3C", fontFamily: "SpaceMono" }}>
+              Back
+            </Text>
+          </Pressable> */}
+          <TouchableOpacity onPress={() => openDrawer()}>
+            <Image
+              source={require("../assets/images/finale-logo.svg")}
+              style={{
+                width: 150,
+                height: 10,
+                bottom: 0,
+                left: 0,
+                resizeMode: "contain",
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+
         {page === "playing" || page === "home" ? null : (
           <Text
             style={{
