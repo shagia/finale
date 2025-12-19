@@ -343,5 +343,22 @@ class JellyfinAPI {
   }
 }
 
+// Singleton instance
+let jellyfinApiInstance: JellyfinAPI | null = null;
+
+/**
+ * Get or create the singleton JellyfinAPI instance
+ * This ensures only one instance exists globally, preventing multiple authentication attempts
+ */
+export const getJellyfinApi = (config?: JellyfinConfig): JellyfinAPI => {
+  if (!jellyfinApiInstance) {
+    if (!config) {
+      throw new Error('JellyfinAPI config is required for first initialization');
+    }
+    jellyfinApiInstance = new JellyfinAPI(config);
+  }
+  return jellyfinApiInstance;
+};
+
 export default JellyfinAPI;
 

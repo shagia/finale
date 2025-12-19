@@ -10,7 +10,8 @@ import {
   Pressable,
   Platform,
 } from "react-native";
-import JellyfinAPI, { JellyfinItem } from "@/scripts/services/jellyfin-api";
+import { JellyfinItem } from "@/scripts/services/jellyfin-api";
+import { getJellyfinApi } from "@/scripts/services/jellyfin-api";
 import { USER_AUTH } from "@/constants/secrets/user-details";
 import { AUTH_URL } from "@/constants/secrets/auth-headers";
 import MarqueeText from "@/components/MarqueeText";
@@ -43,7 +44,7 @@ export default function Index() {
       { text: "OK", onPress: () => console.log("OK Pressed") },
     ]);
 
-  const jellyfinApi = new JellyfinAPI({
+  const jellyfinApi = getJellyfinApi({
     baseUrl: AUTH_URL,
     username: USER_AUTH.username,
     password: USER_AUTH.password,
@@ -84,7 +85,7 @@ export default function Index() {
   useEffect(() => {
     if (currentTrack) {
       // Update overview when track changes
-      getItemOverview(jellyfinApi, currentTrack.AlbumId).then(setItemOverview);
+      getItemOverview(currentTrack.AlbumId).then(setItemOverview);
       setAudioMetadata(currentTrack);
     }
   }, [currentTrack]);

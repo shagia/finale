@@ -1,18 +1,17 @@
-import JellyfinAPI from '../services/jellyfin-api';
+import { getJellyfinApi } from '../services/jellyfin-api';
 
 /**
  * Get the overview text for any item by its ID
  * Returns the overview string or a default message if not available
  * 
- * @param jellyfinApi - An instance of JellyfinAPI
  * @param itemId - The ID of the item to get the overview for
  * @returns A promise that resolves to the overview string
  */
 export const getItemOverview = async (
-  jellyfinApi: JellyfinAPI,
   itemId: string
 ): Promise<string> => {
   try {
+    const jellyfinApi = getJellyfinApi();
     const item = await jellyfinApi.getItem(itemId);
     // console.log("Item Overview in getItemOverview: " + item.Id + item.Name + " with Overview: " + item.Overview);
     return (

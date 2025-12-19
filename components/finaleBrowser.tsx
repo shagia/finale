@@ -10,14 +10,15 @@ import {
 } from "react-native";
 import MarqueeText from "@/components/MarqueeText";
 import { requestAudioPlayback } from "@/scripts/services/audio-service";
-import JellyfinAPI, { JellyfinItem } from "@/scripts/services/jellyfin-api";
+import { JellyfinItem } from "@/scripts/services/jellyfin-api";
+import { getJellyfinApi } from "@/scripts/services/jellyfin-api";
 
 const [focusedItem, setFocusedItem] = useState<JellyfinItem | null>(null);
 const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
 const [itemOverview, setItemOverview] = useState<string | null>(null);
 
 import { USER_AUTH } from "@/constants/secrets/user-details";
-const jellyfinApi = new JellyfinAPI({
+const jellyfinApi = getJellyfinApi({
   baseUrl: "http://yuji:8096/",
   username: USER_AUTH.username,
   password: USER_AUTH.password,
