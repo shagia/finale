@@ -1,7 +1,9 @@
-# Ignore constants and secrets
-
+# Ignore the environment variables file
 .env
-secrets/
+
+# Ignore all the contents of the secrets folder, but keep the gitkeep file to keep the folder present
+constants/secrets/*
+!constants/secrets/.gitkeep
 
 # Node.js
 node_modules/
