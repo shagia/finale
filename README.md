@@ -1,14 +1,15 @@
-# Finale
+<p align="center">
+  <img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/logo-hero.jpg" alt="Finale logo" width="100%">
+</p>
 
-![Finale logo](/public/images/logo-hero.jpg "Finale logo")
 
 Finale is an early development streamer for the Jellyfin Media Server. It's in an incredibly early state right now, and a lot of things are missing, and maybe broken.
 
-## 🚀 How to use
-
+# Getting Started with Development
+## Constants
 - `cd` into the project
 
-- Make the folder in `/constants/secrets` and add the two following files:
+- Add the following two files in `/constants/secrets`:
 
 ```ts
 //  auth-headers.tsx
@@ -26,6 +27,9 @@ export const USER_AUTH = {
     password: 'your-password',
 }
 ```
+
+
+## Running
 
 - For TV development:
 
