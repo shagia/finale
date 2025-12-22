@@ -6,6 +6,16 @@
 Finale is an early development streamer for the Jellyfin Media Server. It's in an incredibly early state right now, and a lot of things are missing, and maybe broken.
 
 # Getting Started with Development
+## Prerequisites
+Finale is a software that utilizes the Jellyfin Media Server to exclusively play music. Requirements are:
+- Any OS that has a Webview
+- Xcode (for TV or iOS development)
+- A local or remote Jellyfin instance, local is recommended for now
+- A Jellyfin library that only contains music
+- An API token from your Jellyfin instance
+
+There is no logic handling for multiple libraries or non-Music libraries, Finale currently grabs *any* present item from your library. It's recommended to deploy a library with only music until I introduce the logic to pick libraries and skip libraries that aren't Music related.
+
 ## Constants
 - `cd` into the project
 
@@ -34,7 +44,7 @@ export const USER_AUTH = {
 - For TV development:
 
 ```sh
-npm
+npm install
 npm prebuild:tv # Executes clean Expo prebuild with TV modifications
 npm ios # Build and run for Apple TV
 npm android # Build for Android TV
@@ -44,7 +54,7 @@ npm web # Run the project on web from localhost
 - For mobile development:
 
 ```sh
-npm
+npm install
 npm prebuild # Executes Expo prebuild with no TV modifications
 npm ios # Build and run for iOS
 npm android # Build for Android mobile
