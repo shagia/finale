@@ -10,7 +10,7 @@ import ItemList from "@/components/ItemList";
 export default function PlayingPage() {
   const player = getAudioPlayer();
   const status = useGlobalAudioPlayerStatus(player);
-  const { handleNextTrack, handlePreviousTrack, currentTrack, queue } =
+  const { handleNextTrack, handlePreviousTrack, currentTrack, queue, currentIndex } =
     usePlayback();
   console.log(player);
   //console.log("Current Track: " + currentTrack?.Name);
@@ -46,9 +46,16 @@ export default function PlayingPage() {
           <View
             style={{
               marginBottom: 40,
-              marginLeft: 40,
+              paddingLeft: 40,
+              paddingRight: 40,
               width: "20%",
               height: "100%",
+            }}
+          >
+            <View style={{
+              width: "100%",
+              justifyContent: "space-between",
+              flexDirection: "row",
             }}
           >
             <Text
@@ -57,10 +64,23 @@ export default function PlayingPage() {
                 marginBottom: 10,
                 marginTop: 20,
                 fontFamily: "SpaceMono",
+                textAlign: "left",
               }}
             >
               Queue
             </Text>
+            <Text
+              style={{
+                color: "white",
+                marginBottom: 10,
+                marginTop: 20,
+                fontFamily: "SpaceMono",
+                textAlign: "right",
+              }}
+            >
+              {currentIndex >= 0 ? `• ${currentIndex + 1}` : ''} / {queue?.length || 0}
+            </Text>
+            </View>
             <ItemList page="playing" list={queue || []} currentTrack={currentTrack} />
           </View>
         </View>

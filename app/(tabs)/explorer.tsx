@@ -20,13 +20,15 @@ import { NowPlayingWidget } from "@/components/widgets/nowPlayingWidget";
 import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
 import { usePlayback } from "@/components/PlaybackProvider";
 import { getItemOverview } from "@/scripts/helpers/getItemOverview";
+import { queueAndPlayAlbum } from "@/scripts/helpers/queueAndPlayAlbum";
 import Header from "@/components/header";
+import { useFocusedItem } from "@/components/FocusedItemProvider";
 
 export default function Index() {
   const [publicURL, setPublicURL] = useState<string | null>(null);
   const [data, setData] = useState<JellyfinItem[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [focusedItem, setFocusedItem] = useState<JellyfinItem | null>(null);
+  const { focusedItem, setFocusedItem } = useFocusedItem();
   const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
   const [itemOverview, setItemOverview] = useState<string | null>(null);
   const router = useRouter();
@@ -94,6 +96,7 @@ export default function Index() {
       <Header />
       <ScrollView
         focusable={true}
+        pagingEnabled={true}
         hasTVPreferredFocus
         nestedScrollEnabled={Platform.isTV}
         contentContainerStyle={{
@@ -119,22 +122,24 @@ export default function Index() {
           // In the meantime, it should be time to convert this to a method or a component
           <Pressable
             onPress={async () => {
-              const albumItems = await jellyfinApi.getAllAlbumItems(item.Id);
-              console.log(`Pressed Album: ${item.Name} with ID: ${item.Id}`);
-              console.log("Album Items:", albumItems);
+              try {
+                const albumItems = await queueAndPlayAlbum(
+                  item.Id,
+                  item.Name,
+                  jellyfinApi,
+                  setQueueItems,
+                  playTrack
+                );
 
-              // Create queue from all album items
-              setQueueItems(albumItems.Items);
-
-              // Play the first track in the queue
-              if (albumItems.Items.length > 0) {
-                await playTrack(albumItems.Items[0]);
+                Alert.alert(
+                  "Item Pressed",
+                  `You pressed on ${item.Name}, ${item.Id}. Queue created with ${albumItems.length} tracks.`
+                );
+                
+              } catch (error) {
+                console.error("Error queueing album:", error);
+                Alert.alert("Error", `Failed to queue album: ${item.Name}`);
               }
-
-              Alert.alert(
-                "Item Pressed",
-                `You pressed on ${item.Name}, ${item.Id}. Queue created with ${albumItems.Items.length} tracks.`
-              );
             }}
             onLongPress={() => {
               console.log(`Long Pressed ${item.Name}`);
@@ -224,7 +229,7 @@ export default function Index() {
           paddingRight: 50,
           backgroundColor: "#171717",
           borderTopColor: "#454545",
-          borderTopWidth: 2,
+          borderTopWidth: 1,
         }}
       >
         <View
@@ -250,7 +255,7 @@ export default function Index() {
               >
                 Focused item
               </Text>
-              <FocusedItemWidget focusedItem={focusedItem} loading={loading} />
+              <FocusedItemWidget loading={loading} />
             </View>
           </View>
 
