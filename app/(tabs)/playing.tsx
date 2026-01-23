@@ -6,6 +6,7 @@ import { AUTH_URL } from "@/constants/secrets/auth-headers";
 import { getRoundedMinute } from "@/scripts/helpers/getMinuteValue";
 import Header from "@/components/header";
 import ItemList from "@/components/ItemList";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function PlayingPage() {
   const player = getAudioPlayer();
@@ -185,12 +186,7 @@ export default function PlayingPage() {
                     width: 100, height: 100,
                 }}
               >
-                <Image
-                  style={{ width: "100%", height: "100%" }}
-                  source={{
-                    uri: `https://placehold.co/30x30?text=Nextfont=source-sans-pro`,
-                  }}
-                />
+                <Ionicons name="play-skip-back" size={100} color="white" />
               </Pressable>
               <Pressable
                 onPress={() => {
@@ -206,14 +202,7 @@ export default function PlayingPage() {
                     width: 100, height: 100,
                 }}
               >
-                <Image
-                  style={{ width: "100%", height: "100%" }}
-                  source={{
-                    uri: `https://placehold.co/30x30?text=${
-                      status?.playing ? "⏹︎" : "▶"
-                    }&font=source-sans-pro`,
-                  }}
-                />
+                <Ionicons name={status?.playing ? "pause" : "play"} size={100} color="white" />
               </Pressable>
               <Pressable
                 onPress={() => {
@@ -223,12 +212,7 @@ export default function PlayingPage() {
                     width: 100, height: 100,
                 }}
               >
-                <Image
-                  style={{ width: "100%", height: "100%" }}
-                  source={{
-                    uri: `https://placehold.co/30x30?text=Nextfont=source-sans-pro`,
-                  }}
-                />
+                <Ionicons name="play-skip-forward" size={100} color="white" />
               </Pressable>
             </View>
           </View>

@@ -6,8 +6,13 @@ import { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import MarqueeText from "@/components/MarqueeText";
 import { usePlayback } from "@/components/PlaybackProvider";
 import { AUTH_URL } from "@/constants/secrets/auth-headers";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-import { getMinute, getRoundedMinute, getSecond } from "@/scripts/helpers/getMinuteValue";
+import {
+  getMinute,
+  getRoundedMinute,
+  getSecond,
+} from "@/scripts/helpers/getMinuteValue";
 interface NowPlayingWidgetProps {
   metadata: JellyfinItem | null;
 }
@@ -22,15 +27,22 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
   //console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
   //console.log(metadata);
   return (
-    <View style={{ backgroundColor: "lightgray", flexDirection: "row", minWidth: 200, height: 150}}>
+    <View
+      style={{
+        backgroundColor: "lightgray",
+        flexDirection: "row",
+        minWidth: 200,
+        height: 150,
+      }}
+    >
       <View style={{ marginRight: 10 }}>
         <TouchableOpacity onPress={() => router.navigate("/playing")}>
-        <Image
-          source={{
-            uri: `${AUTH_URL}/Items/${metadata?.AlbumId}/Images/Primary`, // Replace with base URL variable
-          }}
-          style={{ width: 150, height: 150 }}
-        />
+          <Image
+            source={{
+              uri: `${AUTH_URL}/Items/${metadata?.AlbumId}/Images/Primary`, // Replace with base URL variable
+            }}
+            style={{ width: 150, height: 150 }}
+          />
         </TouchableOpacity>
       </View>
       <View
@@ -42,62 +54,69 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
         }}
       >
         <View>
-           <MarqueeText
-                  text={`${metadata?.Name}`}
-                  width={250}
-                  style={{
-                    fontFamily: "IBM Plex Mono",
-                    color: "black",}}
-                />
           <MarqueeText
-                  text={`${metadata?.AlbumArtist}`}
-                  width={250}
-                  style={{
-                    fontFamily: "IBM Plex Mono",
-                    color: "black",}}
-                />
+            text={`${metadata?.Name}`}
+            width={250}
+            style={{
+              fontFamily: "IBM Plex Mono",
+              color: "black",
+            }}
+          />
           <MarqueeText
-                  text={`${metadata?.Album}`}
-                  width={250}
-                  style={{
-                    fontFamily: "IBM Plex Mono",
-                    color: "black",}}
-                />
+            text={`${metadata?.AlbumArtist}`}
+            width={250}
+            style={{
+              fontFamily: "IBM Plex Mono",
+              color: "black",
+            }}
+          />
+          <MarqueeText
+            text={`${metadata?.Album}`}
+            width={250}
+            style={{
+              fontFamily: "IBM Plex Mono",
+              color: "black",
+            }}
+          />
         </View>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-            <Text>{`${getRoundedMinute(status?.currentTime || 0)}`}</Text>
-            <TouchableOpacity onPress={() => {
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text>{`${getRoundedMinute(status?.currentTime || 0)}`}</Text>
+          <TouchableOpacity
+            onPress={() => {
               handlePreviousTrack();
-            }}>
-            <Image 
-              style={{ width: 30, height: 30 }}
-              source={{
-              uri: `https://placehold.co/30x30?text=Nextfont=source-sans-pro`
-            }} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => {
+            }}
+          >
+            <Ionicons name="play-skip-back" size={30} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
               if (status?.playing) {
                 player?.pause();
               } else {
                 player?.play();
               }
-            }}>
-            <Image 
-              style={{ width: 30, height: 30 }}
-              source={{
-              uri: `https://placehold.co/30x30?text=${status?.playing ? "⏹︎" : "▶"}&font=source-sans-pro`
-            }} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => {
+            }}
+          >
+            <Ionicons
+              name={status?.playing ? "pause" : "play"}
+              size={30}
+              color="black"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
               handleNextTrack();
-            }}>
-            <Image 
-              style={{ width: 30, height: 30 }}
-              source={{
-              uri: `https://placehold.co/30x30?text=Nextfont=source-sans-pro`
-            }} />
-            </TouchableOpacity>
-            <Text>{`${getRoundedMinute(status?.duration || 0)}`}</Text>
+            }}
+          >
+            <Ionicons name="play-skip-forward" size={30} color="black" />
+          </TouchableOpacity>
+          <Text>{`${getRoundedMinute(status?.duration || 0)}`}</Text>
         </View>
       </View>
     </View>
