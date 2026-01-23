@@ -1,4 +1,11 @@
-import { Text, Image, View, ScrollView, Pressable } from "react-native";
+import {
+  Text,
+  Image,
+  View,
+  ScrollView,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { getAudioPlayer } from "@/scripts/services/audio-service";
 import { useGlobalAudioPlayerStatus } from "@/hooks/useGlobalAudioPlayerStatus";
 import { usePlayback } from "@/components/PlaybackProvider";
@@ -14,6 +21,7 @@ import { FocusedItemWidget } from "@/components/widgets/focusedItemWidget";
 import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
 import { NowPlayingWidget } from "@/components/widgets/nowPlayingWidget";
 import { getItemOverview } from "@/scripts/helpers/getItemOverview";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function HomePage() {
   const jellyfinApi = getJellyfinApi({
@@ -23,15 +31,17 @@ export default function HomePage() {
     // ! DO NOT USE THESE CREDENTIALS IN PRODUCTION, replace with a constants file that's ignored !
   });
   const [data, setData] = useState<JellyfinItem[] | null>(null);
-  const [focusedItem, setFocusedItem] = useState<JellyfinItem | null>(null);
   const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
   const [itemOverview, setItemOverview] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   const { playTrack, setQueueItems, currentTrack } = usePlayback();
-  
-  const fetchData = async () => {
+
+  const fetchData = async (isRefresh = false) => {
     try {
+      if (isRefresh) {
+        setLoading(true);
+      }
       // No need to call login() - getRandomItems() will ensure authentication automatically
       const apiData = await jellyfinApi.getRandomItems();
       console.log("Jellyfin Data:", apiData);
@@ -48,7 +58,7 @@ export default function HomePage() {
     fetchData();
   }, []);
 
-useEffect(() => {
+  useEffect(() => {
     if (currentTrack) {
       // Update overview when track changes
       getItemOverview(currentTrack.AlbumId).then(setItemOverview);
@@ -59,7 +69,67 @@ useEffect(() => {
   return (
     <>
       <Header page="home" />
-      <ItemList page="home" list={data || []} />
+      <View
+        style={{
+          width: "100%",
+          height: "72.1%",
+          flexDirection: "row",
+          borderBottomColor: "#454545",
+          borderBottomWidth: 2,
+        }}
+      >
+        <View style={{ width: "80%", height: "100%" }}>
+          <Image
+            source={{
+              uri: `${AUTH_URL}/Items/${currentTrack?.AlbumId}/Images/Primary`,
+            }}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </View>
+        {/* Queue Component */}
+        <View
+          style={{
+            marginBottom: 40,
+            paddingLeft: 40,
+            paddingRight: 40,
+            width: "20%",
+            height: "100%",
+          }}
+        >
+          <View
+            style={{
+              width: "100%",
+              justifyContent: "space-between",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: "white",
+                marginBottom: 10,
+                marginTop: 20,
+                fontFamily: "SpaceMono",
+                textAlign: "left",
+              }}
+            >
+              It's thinking . . .
+            </Text>
+            <Pressable
+              style={{ paddingTop: 10, zIndex: 1000 }}
+              onPress={() => {
+                console.log("Refreshing");
+                fetchData(true);
+              }}
+            >
+              <View>
+                <Ionicons name="refresh-outline" size={18} color="white" />
+              </View>
+            </Pressable>
+          </View>
+          <ItemList page="home" list={data || []} />
+        </View>
+      </View>
       <View
         style={{
           paddingTop: 40,
@@ -68,7 +138,7 @@ useEffect(() => {
           paddingRight: 50,
           backgroundColor: "#171717",
           borderTopColor: "#454545",
-          borderTopWidth: 2,
+          borderTopWidth: 1,
         }}
       >
         <View
@@ -94,7 +164,7 @@ useEffect(() => {
               >
                 Focused item
               </Text>
-              <FocusedItemWidget focusedItem={focusedItem} loading={loading} />
+              <FocusedItemWidget loading={loading} />
             </View>
           </View>
 

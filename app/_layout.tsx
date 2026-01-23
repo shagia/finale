@@ -10,6 +10,7 @@ import { Platform, Pressable, Text, TouchableOpacity, Image, View } from "react-
 import AudioPlayerProvider from "@/components/AudioPlayerProvider";
 import PlaybackProvider from "@/components/PlaybackProvider";
 import DrawerProvider, { useDrawer } from "@/components/DrawerProvider";
+import FocusedItemProvider from "@/components/FocusedItemProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Disable reanimated warnings, may not be useful. I got it from the template project
@@ -68,7 +69,7 @@ function DrawerContent() {
                 />
               </View>
               <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <Text style={{ color: "#3C3C3C", fontFamily: "SpaceMono" }}>build 0.1-digitaldash</Text>
+                <Text style={{ color: "#3C3C3C", fontFamily: "SpaceMono" }}>build 0.0-null</Text>
                 <Text style={{ color: "#3C3C3C", fontFamily: "SpaceMono" }}>{Platform ? Platform.OS + " " + Platform.Version : "Unknown"}</Text>
               </View>
             </View>
@@ -157,9 +158,11 @@ export default function RootLayout() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <AudioPlayerProvider>
           <PlaybackProvider>
-            <DrawerProvider>
-              <DrawerContent />
-            </DrawerProvider>
+            <FocusedItemProvider>
+              <DrawerProvider>
+                <DrawerContent />
+              </DrawerProvider>
+            </FocusedItemProvider>
           </PlaybackProvider>
         </AudioPlayerProvider>
       </GestureHandlerRootView>

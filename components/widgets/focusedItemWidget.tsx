@@ -3,14 +3,15 @@ import {
   View,
 } from "react-native";
 import { JellyfinItem } from "@/scripts/services/jellyfin-api";
+import { useFocusedItem } from "@/components/FocusedItemProvider";
 
 interface FocusedItemWidgetProps {
-  focusedItem: JellyfinItem | null;
   loading: boolean;
 }
 
 
-export const FocusedItemWidget = ({ focusedItem, loading }: FocusedItemWidgetProps) => {
+export const FocusedItemWidget = ({ loading }: FocusedItemWidgetProps) => {
+  const { focusedItem } = useFocusedItem();
   return (
     <View style={{
         width: 600,
