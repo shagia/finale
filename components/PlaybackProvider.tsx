@@ -37,20 +37,27 @@ export default function PlaybackProvider({ children }: { children: React.ReactNo
     currentTrack,
     queue,
     currentIndex,
+    goToTrack,
   } = useQueue();
 
   /**
    * Play a track from the queue
+
    */
   const playTrack = useCallback(async (track: JellyfinItem) => {
     if (!track) return;
+    
+    const trackIndex = queue.findIndex(item => item.Id === track.Id);
+    if (trackIndex !== -1) {
+      goToTrack(trackIndex);
+    }
     
     // Play the track
     const audioUrl = `${AUTH_URL}/Audio/${track.Id}/stream.mp3`;
     await requestAudioPlayback(audioUrl);
     
     console.log(`Playing track: ${track.Name} (${track.Id})`);
-  }, []);
+  }, [queue, goToTrack]);
 
   /**
    * Handle playback completion - advance to next track
