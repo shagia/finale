@@ -1,18 +1,16 @@
+
+
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/hero1.png" alt="Finale logo" width="100%">
 </p>
 
-
 Finale is an early development streamer for the Jellyfin Media Server. It's in an incredibly early state right now, and a lot of things are missing, and maybe broken.
-
-
-<p align="center">
-<img src="https://github.com/shagia/finale/blob/ea010e255b34b53cbfb8032abc8da08b62b09786/public/images/readme/hero2.png?raw=true" width="100%">
 
 ## Getting Started with Development
 <p align="center">
-<img src="https://raw.githubusercontent.com/shagia/finale/ea010e255b34b53cbfb8032abc8da08b62b09786/public/images/readme/hero3-UPSCALED.png" width="100%">
-</p>
+<img src="https://raw.githubusercontent.com/shagia/finale/ce112ab62c7afca967e793082666f6989eca756e/public/images/readme/hero4.jpg" width="100%">
+</p> 
 
 ## Prerequisites
 Finale is a software that utilizes the Jellyfin Media Server to exclusively play music. Requirements are:
@@ -68,3 +66,5 @@ npm ios # Build and run for iOS
 npm android # Build for Android mobile
 npm web # Run the project on web from localhost
 ```
+
+---
