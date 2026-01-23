@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { View, Text, Image, TouchableOpacity, Pressable } from "react-native";
 import { useDrawer } from "./DrawerProvider";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 interface HeaderProps {
   page?: string;
@@ -44,18 +45,16 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
               Back
             </Text>
           </Pressable> */}
-          <TouchableOpacity onPress={() => openDrawer()}>
-            <Image
-              source={require("../assets/images/finale-logo.svg")}
-              style={{
-                width: 150,
-                height: 10,
-                bottom: 0,
-                left: 0,
-                resizeMode: "contain",
-              }}
-            />
-          </TouchableOpacity>
+          <Pressable onPress={() => page === "playing" ? router.back() : openDrawer()}>
+            {page === "playing" ? (
+              <Ionicons name="arrow-back-outline" size={36} style={{ backgroundColor: "black" }} color="white" />
+            ) : (
+              <Image
+                source={require("../assets/images/finale-logo.svg")}
+                style={{ width: 150, height: 10, bottom: 0, left: 0, resizeMode: "contain" }}
+              />
+            )}
+          </Pressable>
         </View>
 
         {page === "playing" || page === "home" ? null : (
