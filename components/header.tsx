@@ -20,7 +20,6 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
             ? {
                 position: "absolute",
                 zIndex: 10,
-                width: "100%",
                 opacity: 1,
                 mixBlendMode: "difference",
                 marginTop: 4, //Temporary fix for logo mispositioning when in playing page
