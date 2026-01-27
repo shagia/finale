@@ -155,7 +155,44 @@ export default function PlayingPage() {
                   backgroundColor: "black",
                 }}
               >
-                <Text style={{ color: "white" }}>Favourite</Text>
+                <Pressable onPress={async () => {
+                  if (!currentTrack || !jellyfinApi) return;
+                  try {
+                    if (currentTrack.UserData?.IsFavorite) {
+                      await jellyfinApi.unmarkItemAsFavorite(currentTrack.Id);
+                    } else {
+                      await jellyfinApi.markItemAsFavorite(currentTrack.Id);
+                    }
+                    // Optimistically update the queue to reflect the favorite status change
+                    updateQueueItems((items) =>
+                      items.map((i): JellyfinItem => {
+                        if (i.Id === currentTrack.Id) {
+                          return {
+                            ...i,
+                            UserData: i.UserData
+                              ? {
+                                  ...i.UserData,
+                                  IsFavorite: !i.UserData.IsFavorite,
+                                }
+                              : {
+                                  IsFavorite: true,
+                                  ItemId: i.Id,
+                                  PlayCount: 0,
+                                  Played: false,
+                                  PlayedAt: "",
+                                  PlayedAtTicks: 0,
+                                },
+                          };
+                        }
+                        return i;
+                      })
+                    );
+                  } catch (err) {
+                    console.error("Failed to toggle favorite:", err);
+                  }
+                }} style={{ }}>
+                  {currentTrack?.UserData?.IsFavorite ? <Ionicons name="heart" size={36} color="red" /> : <Ionicons name="heart-outline" size={36} color="grey" />}
+                </Pressable>
                 <Text style={{ color: "white" }}>Quality</Text>
                 <Text style={{ color: "white" }}>Lyrics</Text>
               </View>
