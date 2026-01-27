@@ -127,7 +127,39 @@ export default function HomePage() {
               </View>
             </Pressable>
           </View>
-          <ItemList page="home" list={data || []} />
+          <ItemList
+            page="home"
+            list={data || []}
+            jellyfinApi={jellyfinApi}
+            onFavoriteToggle={(item) => {
+              // Optimistically update the item in the list instead of refetching everything
+              if (data) {
+                setData(
+                  data.map((i): JellyfinItem => {
+                    if (i.Id === item.Id) {
+                      return {
+                        ...i,
+                        UserData: i.UserData
+                          ? {
+                              ...i.UserData,
+                              IsFavorite: !i.UserData.IsFavorite,
+                            }
+                          : {
+                              IsFavorite: true,
+                              ItemId: i.Id,
+                              PlayCount: 0,
+                              Played: false,
+                              PlayedAt: "",
+                              PlayedAtTicks: 0,
+                            },
+                      };
+                    }
+                    return i;
+                  })
+                );
+              }
+            }}
+          />
         </View>
       </View>
       <View

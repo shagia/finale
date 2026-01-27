@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { JellyfinItem } from '@/scripts/services/jellyfin-api';
 import { requestAudioPlayback, setOnPlaybackComplete } from '@/scripts/services/audio-service';
 import { useQueue } from '@/hooks/useQueue';
@@ -12,6 +12,7 @@ interface PlaybackContextType {
   handleNextTrack: () => Promise<void>;
   handlePlaybackComplete: () => Promise<void>;
   setQueueItems: (items: JellyfinItem[]) => void;
+  updateQueueItems: (updater: (items: JellyfinItem[]) => JellyfinItem[]) => void;
   currentTrack: JellyfinItem | null;
   hasPrevious: () => boolean;
   hasNext: () => boolean;
@@ -34,6 +35,7 @@ export default function PlaybackProvider({ children }: { children: React.ReactNo
     hasNext,
     isQueueFinished,
     setQueueItems,
+    updateQueueItems,
     currentTrack,
     queue,
     currentIndex,
@@ -118,18 +120,19 @@ export default function PlaybackProvider({ children }: { children: React.ReactNo
   // Monitor playback completion to trigger callbacks
   usePlaybackCompletion();
 
-  const value: PlaybackContextType = {
+  const value: PlaybackContextType = useMemo(() => ({
     playTrack,
     handlePreviousTrack,
     handleNextTrack,
     handlePlaybackComplete,
     setQueueItems,
+    updateQueueItems,
     currentTrack,
     hasPrevious,
     hasNext,
     queue,
     currentIndex,
-  };
+  }), [playTrack, handlePreviousTrack, handleNextTrack, handlePlaybackComplete, setQueueItems, updateQueueItems, currentTrack, hasPrevious, hasNext, queue, currentIndex]);
 
   return (
     <PlaybackContext.Provider value={value}>

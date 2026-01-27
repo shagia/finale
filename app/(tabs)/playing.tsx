@@ -7,12 +7,14 @@ import { getRoundedMinute } from "@/scripts/helpers/getMinuteValue";
 import Header from "@/components/header";
 import ItemList from "@/components/ItemList";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { getJellyfinApiIfExists, JellyfinItem } from "@/scripts/services/jellyfin-api";
 
 export default function PlayingPage() {
   const player = getAudioPlayer();
   const status = useGlobalAudioPlayerStatus(player);
-  const { handleNextTrack, handlePreviousTrack, currentTrack, queue, currentIndex } =
+  const { handleNextTrack, handlePreviousTrack, currentTrack, queue, currentIndex, updateQueueItems } =
     usePlayback();
+  const jellyfinApi = getJellyfinApiIfExists();
   console.log(player);
   //console.log("Current Track: " + currentTrack?.Name);
   return (
@@ -82,7 +84,38 @@ export default function PlayingPage() {
               {currentIndex >= 0 ? `• ${currentIndex + 1}` : ''} / {queue?.length || 0}
             </Text>
             </View>
-            <ItemList page="playing" list={queue || []} currentTrack={currentTrack} />
+            <ItemList
+              page="playing"
+              list={queue || []}
+              currentTrack={currentTrack}
+              jellyfinApi={jellyfinApi}
+              onFavoriteToggle={(item) => {
+                // Updates the currently toggled item to update favorite status in the item list
+                updateQueueItems((items) =>
+                  items.map((i): JellyfinItem => {
+                    if (i.Id === item.Id) {
+                      return {
+                        ...i,
+                        UserData: i.UserData
+                          ? {
+                              ...i.UserData,
+                              IsFavorite: !i.UserData.IsFavorite,
+                            }
+                          : {
+                              IsFavorite: true,
+                              ItemId: i.Id,
+                              PlayCount: 0,
+                              Played: false,
+                              PlayedAt: "",
+                              PlayedAtTicks: 0,
+                            },
+                      };
+                    }
+                    return i;
+                  })
+                );
+              }}
+            />
           </View>
         </View>
         {/* Song Details & Controller */}
