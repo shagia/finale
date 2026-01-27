@@ -108,7 +108,12 @@ export default function Index() {
         }}
         style={{
           gap: 20,
-          paddingTop: 50,
+          paddingTop: 20,
+          paddingBottom: 50,
+          marginBottom: 50,
+          marginTop: 0,
+          position: "relative",
+          top: 10,
           backgroundColor: "#171717",
         }}
       >
@@ -165,7 +170,7 @@ export default function Index() {
               {
                 paddingLeft: 15,
                 paddingRight: 15,
-                paddingTop: 5,
+                paddingTop: 10,
                 paddingBottom: 10,
               },
               focusedItem?.Id === item.Id && {
@@ -223,13 +228,15 @@ export default function Index() {
       </ScrollView>
       <View
         style={{
-          paddingTop: 40,
-          paddingBottom: 40,
+          paddingTop: 50,
+          paddingBottom: 50,
           paddingLeft: 50,
           paddingRight: 50,
           backgroundColor: "#171717",
           borderTopColor: "#454545",
-          borderTopWidth: 1,
+          borderTopWidth: 2,
+          position: "relative",
+          bottom: 38,
         }}
       >
         <View
