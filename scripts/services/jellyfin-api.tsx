@@ -28,6 +28,15 @@ export interface JellyfinItem {
   ImageTags?: {
     Primary?: string;
   };
+  UserData?: {
+    // TODO: I really need to check for if anything but IsFavorite is needed. This was just meant for making IsFavorite known for the ItemList component and defining it's type, but I'll see if the entire UserData object is needed.
+    IsFavorite: boolean;
+    ItemId: string;
+    PlayCount?: number;
+    Played?: boolean;
+    PlayedAt?: string;
+    PlayedAtTicks?: number;
+  };
   BackdropImageTags?: string[];
   ThumbImageTags?: string[];
 }
@@ -201,6 +210,49 @@ class JellyfinAPI {
   }
 
   /**
+   * Mark an item as favorite for the current user.
+   * Uses Jellyfin endpoint: POST /Users/{UserId}/FavoriteItems/{Id}
+   */
+  async markItemAsFavorite(itemId: string): Promise<void> {
+    await this.ensureAuthenticated();
+    if (!this.userId) throw new Error('Not authenticated');
+    try {
+      await this.axiosInstance.post(
+        `/Users/${this.userId}/FavoriteItems/${itemId}`,
+        {},
+        {
+          headers: {
+            'Authorization': `MediaBrowser Token="${this.authToken}"`,
+          },
+        }
+      );
+    } catch (error) {
+      throw new Error(`Failed to mark item as favorite: ${error}`);
+    }
+  }
+
+  /**
+   * Remove an item from favorites for the current user.
+   * Uses Jellyfin endpoint: DELETE /Users/{UserId}/FavoriteItems/{Id}
+   */
+  async unmarkItemAsFavorite(itemId: string): Promise<void> {
+    await this.ensureAuthenticated();
+    if (!this.userId) throw new Error('Not authenticated');
+    try {
+      await this.axiosInstance.delete(
+        `/Users/${this.userId}/FavoriteItems/${itemId}`,
+        {
+          headers: {
+            'Authorization': `MediaBrowser Token="${this.authToken}"`,
+          },
+        }
+      );
+    } catch (error) {
+      throw new Error(`Failed to remove item from favorites: ${error}`);
+    }
+  }
+
+  /**
    * Get 25 random items from the Jellyfin library
    */
   async getRandomItems(): Promise<JellyfinItem[]> {
@@ -214,7 +266,7 @@ class JellyfinAPI {
           UserId: this.userId,
           IncludeItemTypes: 'MusicAlbum',
           Recursive: true, 
-          Limit: 25,
+          Limit: 50,
           SortBy: 'Random',
           fields: 'MediaStreams, Overview, ProductionYear, RunTimeTicks, AlbumArtist',
         }
@@ -282,38 +334,10 @@ class JellyfinAPI {
   }
 
   /**
-   * Get all movies
-   */
-  async getMovies(): Promise<JellyfinItem[]> {
-    return this.getItemsByType('Movie');
-  }
-
-  /**
-   * Get all series
-   */
-  async getSeries(): Promise<JellyfinItem[]> {
-    return this.getItemsByType('Series');
-  }
-
-  /**
-   * Get all episodes
-   */
-  async getEpisodes(): Promise<JellyfinItem[]> {
-    return this.getItemsByType('Episode');
-  }
-
-  /**
    * Get all audio items
    */
   async getAudio(): Promise<JellyfinItem[]> {
     return this.getItemsByType('Audio');
-  }
-
-  /**
-   * Get all photos
-   */
-  async getPhotos(): Promise<JellyfinItem[]> {
-    return this.getItemsByType('Photo');
   }
 
   /**
@@ -347,8 +371,8 @@ class JellyfinAPI {
 let jellyfinApiInstance: JellyfinAPI | null = null;
 
 /**
- * Get or create the singleton JellyfinAPI instance
- * This ensures only one instance exists globally, preventing multiple authentication attempts
+ * Get or create the singleton JellyfinAPI instance.
+ * Pass config on first use (e.g. from index/explorer); later calls can omit config to get the same instance.
  */
 export const getJellyfinApi = (config?: JellyfinConfig): JellyfinAPI => {
   if (!jellyfinApiInstance) {
@@ -360,5 +384,10 @@ export const getJellyfinApi = (config?: JellyfinConfig): JellyfinAPI => {
   return jellyfinApiInstance;
 };
 
+/**
+ * Return the current JellyfinAPI singleton if it exists, otherwise null.
+ * Use this when you need the existing instance (e.g. for mark-as-favorite) and a parent has already called getJellyfinApi(config).
+ */
+export const getJellyfinApiIfExists = (): JellyfinAPI | null => jellyfinApiInstance;
 export default JellyfinAPI;
 
