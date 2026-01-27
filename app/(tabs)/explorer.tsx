@@ -9,6 +9,7 @@ import {
   Alert,
   Pressable,
   Platform,
+  FlatList,
 } from "react-native";
 import { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import { getJellyfinApi } from "@/scripts/services/jellyfin-api";
@@ -24,7 +25,16 @@ import { queueAndPlayAlbum } from "@/scripts/helpers/queueAndPlayAlbum";
 import Header from "@/components/header";
 import { useFocusedItem } from "@/components/FocusedItemProvider";
 
-export default function Index() {
+type ViewMode = "flatlist" | "scrollview";
+
+interface ExplorerProps {
+  viewMode?: ViewMode;
+}
+
+// For debugging only. Once the functionality for a view setting is added, this will be binded to a localStorage or cookie value
+const defaultViewMode: ViewMode = "flatlist";
+
+export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
   const [publicURL, setPublicURL] = useState<string | null>(null);
   const [data, setData] = useState<JellyfinItem[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -94,138 +104,212 @@ export default function Index() {
   return (
     <>
       <Header />
-      <ScrollView
-        focusable={true}
-        pagingEnabled={true}
-        hasTVPreferredFocus
-        nestedScrollEnabled={Platform.isTV}
-        contentContainerStyle={{
-          flexGrow: 1,
-          flexDirection: "row",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        style={{
-          gap: 20,
-          paddingTop: 20,
-          paddingBottom: 50,
-          marginBottom: 50,
-          marginTop: 0,
-          position: "relative",
-          top: 10,
-          backgroundColor: "#171717",
-        }}
-      >
-        {data?.map((item) => (
-          // So many things wrong here
-          // Really lazy way of playing **the first** item, and quickly changing it when you press a new item
-          // AND its a static URL. No transcoding support and that's not what I want
-          // FIXED: There's no handling on the player for stopping/pausing/changing tracks properly. When you rehydrate the player with a new URL, the old player doesn't even stop, but you have two audio streams playing simultaneously instead.
-          // In a productive environement, we want an entire album to be queued and played in order
-          // Worth reviewing the Finamp codebase to see how they handle this
-          // In the meantime, it should be time to convert this to a method or a component
-          <Pressable
-            onPress={async () => {
-              try {
-                const albumItems = await queueAndPlayAlbum(
-                  item.Id,
-                  item.Name,
-                  jellyfinApi,
-                  setQueueItems,
-                  playTrack
-                );
+      {(viewMode === "flatlist") && (
+        <FlatList
+          data={data}
+          contentContainerStyle={{ gap: 30, paddingLeft: 80, paddingRight: 80 }}
+          ListHeaderComponent={() => (
+            <View>
+              <Text style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}>Favourites</Text>
+            </View>
+          )}
+          renderItem={({ item }) => (
+            <View>
+              <Pressable
+                onPress={() => {
+                  console.log(item);
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <Image
+                    style={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: 5,
+                    }}
+                    source={{
+                      uri: `${AUTH_URL}/Items/${item.Id}/Images/Primary`,
+                    }}
+                  />
+                  <View style={{ flexDirection: "row", gap: 5 }}>
+                    <View style={{ flexDirection: "column", gap: 5 }}>
+                      <Text
+                        style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
+                      >{item.AlbumArtist}</Text>
+                      <Text
+                        style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
+                      >{item.Name}</Text>
+                    </View>
 
-                Alert.alert(
-                  "Item Pressed",
-                  `You pressed on ${item.Name}, ${item.Id}. Queue created with ${albumItems.length} tracks.`
-                );
-                
-              } catch (error) {
-                console.error("Error queueing album:", error);
-                Alert.alert("Error", `Failed to queue album: ${item.Name}`);
-              }
-            }}
-            onLongPress={() => {
-              console.log(`Long Pressed ${item.Name}`);
-            }}
-            onFocus={() => {
-              console.log(`Focused on ${item.Name}`);
-              setFocusedItem(item);
-              // getMediaInfo(item.Id)
-            }}
-            onBlur={() => {
-              console.log(`Blurred ${item.Name}`);
-              // Not the same as hovering out. You hovering out implies you're no longer focused on any item at all, Blurring out implies you're focused on the next item. Nulling for blurring would break the flow of focus.
-            }}
-            onHoverIn={() => {
-              console.log(`Hovered on ${item.Name}`);
-              setFocusedItem(item);
-            }}
-            onHoverOut={() => {
-              console.log(`Hovered out of ${item.Name}`);
-              setFocusedItem(null);
-            }}
-            style={[
-              {
-                paddingLeft: 15,
-                paddingRight: 15,
-                paddingTop: 10,
-                paddingBottom: 10,
-              },
-              focusedItem?.Id === item.Id && {
-                backgroundColor: "Pink",
-                transform: [{ scale: 1.05 }],
-              },
-            ]}
-            key={item.Id}
-          >
-            <View
-              key={item.Id}
+                    <Text
+                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
+                    >{item.Type}</Text>
+                    <Text
+                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
+                    >{item.ProductionYear}</Text>
+                    <Text
+                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
+                    >{item.RunTimeTicks}</Text>
+                    <Text
+                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
+                    >{item.Overview}</Text>
+                    <Text
+                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
+                    >{item.ImageTags?.Primary}</Text>
+                    <Text
+                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
+                    >{item.UserData?.IsFavorite}</Text>
+                  </View>
+                </View>
+              </Pressable>
+            </View>
+          )}
+          keyExtractor={(item) => item.Id}
+        />
+      )}
+      {(viewMode === "scrollview") && (
+        <ScrollView
+          focusable={true}
+          pagingEnabled={true}
+          hasTVPreferredFocus
+          nestedScrollEnabled={Platform.isTV}
+          contentContainerStyle={{
+            flexGrow: 1,
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          style={{
+            gap: 20,
+            paddingTop: 20,
+            paddingBottom: 50,
+            marginBottom: 50,
+            marginTop: 0,
+            position: "relative",
+            top: 10,
+            backgroundColor: "#171717",
+          }}
+        >
+          {data?.map((item) => (
+            // So many things wrong here
+            // Really lazy way of playing **the first** item, and quickly changing it when you press a new item
+            // AND its a static URL. No transcoding support and that's not what I want
+            // FIXED: There's no handling on the player for stopping/pausing/changing tracks properly. When you rehydrate the player with a new URL, the old player doesn't even stop, but you have two audio streams playing simultaneously instead.
+            // In a productive environement, we want an entire album to be queued and played in order
+            // Worth reviewing the Finamp codebase to see how they handle this
+            // In the meantime, it should be time to convert this to a method or a component
+            <Pressable
+              onPress={async () => {
+                try {
+                  const albumItems = await queueAndPlayAlbum(
+                    item.Id,
+                    item.Name,
+                    jellyfinApi,
+                    setQueueItems,
+                    playTrack,
+                  );
+
+                  Alert.alert(
+                    "Item Pressed",
+                    `You pressed on ${item.Name}, ${item.Id}. Queue created with ${albumItems.length} tracks.`,
+                  );
+                } catch (error) {
+                  console.error("Error queueing album:", error);
+                  Alert.alert("Error", `Failed to queue album: ${item.Name}`);
+                }
+              }}
+              onLongPress={() => {
+                console.log(`Long Pressed ${item.Name}`);
+              }}
+              onFocus={() => {
+                console.log(`Focused on ${item.Name}`);
+                setFocusedItem(item);
+                // getMediaInfo(item.Id)
+              }}
+              onBlur={() => {
+                console.log(`Blurred ${item.Name}`);
+                // Not the same as hovering out. You hovering out implies you're no longer focused on any item at all, Blurring out implies you're focused on the next item. Nulling for blurring would break the flow of focus.
+              }}
+              onHoverIn={() => {
+                console.log(`Hovered on ${item.Name}`);
+                setFocusedItem(item);
+              }}
+              onHoverOut={() => {
+                console.log(`Hovered out of ${item.Name}`);
+                setFocusedItem(null);
+              }}
               style={[
                 {
-                  paddingTop: 5,
-                  paddingLeft: 5,
-                  paddingRight: 5,
-                  paddingBottom: 30,
+                  paddingLeft: 15,
+                  paddingRight: 15,
+                  paddingTop: 10,
+                  paddingBottom: 10,
                 },
-                focusedItem?.Id === item.Id && { backgroundColor: "lightgray" },
+                focusedItem?.Id === item.Id && {
+                  backgroundColor: "Pink",
+                  transform: [{ scale: 1.05 }],
+                },
               ]}
+              key={item.Id}
             >
-              <Image
-                style={{
-                  width: 320,
-                  height: 320,
-                  borderRadius: 5,
-                }}
-                source={{
-                  uri: `${AUTH_URL}/Items/${item.Id}/Images/Primary`, // Replace with base URL variable
-                }}
-              />
-              <View style={{ paddingTop: 10 }}>
-                <MarqueeText
-                  text={item.AlbumArtist || "Unknown Artist"}
-                  isFocused={focusedItem?.Id === item.Id}
-                  width={250}
+              <View
+                key={item.Id}
+                style={[
+                  {
+                    paddingTop: 5,
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                    paddingBottom: 30,
+                  },
+                  focusedItem?.Id === item.Id && {
+                    backgroundColor: "lightgray",
+                  },
+                ]}
+              >
+                <Image
                   style={{
-                    fontFamily: "IBM Plex Mono",
-                    color: focusedItem?.Id === item.Id ? "black" : "#ffffffff",
+                    width: 320,
+                    height: 320,
+                    borderRadius: 5,
+                  }}
+                  source={{
+                    uri: `${AUTH_URL}/Items/${item.Id}/Images/Primary`, // Replace with base URL variable
                   }}
                 />
-                <MarqueeText
-                  text={item.Name}
-                  isFocused={focusedItem?.Id === item.Id}
-                  width={250}
-                  style={{
-                    fontFamily: "IBM Plex Mono",
-                    color: focusedItem?.Id === item.Id ? "black" : "#ffffffff",
-                  }}
-                />
+                <View style={{ paddingTop: 10 }}>
+                  <MarqueeText
+                    text={item.AlbumArtist || "Unknown Artist"}
+                    isFocused={focusedItem?.Id === item.Id}
+                    width={250}
+                    style={{
+                      fontFamily: "IBM Plex Mono",
+                      color:
+                        focusedItem?.Id === item.Id ? "black" : "#ffffffff",
+                    }}
+                  />
+                  <MarqueeText
+                    text={item.Name}
+                    isFocused={focusedItem?.Id === item.Id}
+                    width={250}
+                    style={{
+                      fontFamily: "IBM Plex Mono",
+                      color:
+                        focusedItem?.Id === item.Id ? "black" : "#ffffffff",
+                    }}
+                  />
+                </View>
               </View>
-            </View>
-          </Pressable>
-        ))}
-      </ScrollView>
+            </Pressable>
+          ))}
+        </ScrollView>
+      )}
       <View
         style={{
           paddingTop: 50,
@@ -301,8 +385,11 @@ export default function Index() {
             </View>
           </View>
         </View>
-        <View style={{paddingTop: 10}}>
-          <Text style={{ color: "#9c9c9cff", fontFamily: "SpaceMono" }}>Press Left to open Finale Menu</Text></View>
+        <View style={{ paddingTop: 10 }}>
+          <Text style={{ color: "#9c9c9cff", fontFamily: "SpaceMono" }}>
+            Press Left to open Finale Menu
+          </Text>
+        </View>
       </View>
     </>
   );
