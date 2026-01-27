@@ -12,6 +12,8 @@ import { useFocusedItem } from "@/components/FocusedItemProvider";
 import { USER_AUTH } from "@/constants/secrets/user-details";
 import { useMemo } from "react";
 import { queueAndPlayAlbum } from "@/scripts/helpers/queueAndPlayAlbum";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MarqueeText from "./MarqueeText";
 
 interface ItemListProps {
   page: "home" | "playing";
@@ -48,8 +50,8 @@ export default function ItemList({
         const isCurrent = currentTrack?.Id === item.Id;
         const isFocused = focusedItem?.Id === item.Id;
         const isFavorite = item.UserData?.IsFavorite
-          ? "Favorited"
-          : "Not Favorited";
+          ? <Ionicons name="heart" size={24} color="red" />
+          : <Ionicons name="heart-outline" size={24} color="grey" />;
         return (
           <Pressable
             key={item.Id}
@@ -143,18 +145,15 @@ export default function ItemList({
                     >
                       {item.AlbumArtist}
                     </Text>
-                    <Text
-                      style={{
-                        color: isCurrent
-                          ? "white"
-                          : isFocused
-                            ? "white"
-                            : "grey",
-                        fontFamily: "SpaceMono",
-                      }}
-                    >
-                      {item.Name}
-                    </Text>
+                    <MarqueeText
+                    text={item.Name || "Unknown Name"}
+                    isFocused={focusedItem?.Id === item.Id}
+                    width={200}
+                    style={{
+                      fontFamily: "IBM Plex Mono",
+                      color: isCurrent || focusedItem?.Id === item.Id ? "white" : "grey",
+                    }}
+                />
                   </View>
                   <Pressable
                     onPress={async (e) => {
@@ -173,18 +172,13 @@ export default function ItemList({
                     }}
                     style={{ alignSelf: "flex-start" }}
                   >
-                    <Text
+                    <View
                       style={{
-                        color: isCurrent
-                          ? "white"
-                          : isFocused
-                            ? "white"
-                            : "grey",
-                        fontFamily: "SpaceMono",
+                        display: isFocused || isCurrent ? "flex" : "none",
                       }}
                     >
                       {isFavorite}
-                    </Text>
+                    </View>
                   </Pressable>
                 </View>
               </View>
