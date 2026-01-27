@@ -28,6 +28,23 @@ export function useQueue() {
   }, []);
 
   /**
+   * Update queue items while preserving the current index
+   * Useful for updating item properties (like favorite status) without resetting playback position
+   */
+  const updateQueueItems = useCallback((updater: (items: JellyfinItem[]) => JellyfinItem[]) => {
+    setQueue((prev) => {
+      const newItems = updater(prev.items);
+      return {
+        items: newItems,
+        // Preserves currentIndex only if it's shrunk out of bounds after an update
+        currentIndex: prev.currentIndex >= newItems.length 
+          ? Math.max(0, newItems.length - 1)
+          : prev.currentIndex,
+      };
+    });
+  }, []);
+
+  /**
    * Get the current track being played
    */
   const getCurrentTrack = useCallback((): JellyfinItem | null => {
@@ -150,6 +167,7 @@ export function useQueue() {
     hasPrevious,
     hasNext,
     setQueueItems,
+    updateQueueItems,
     goToPrevious,
     advanceToNext,
     goToTrack,
