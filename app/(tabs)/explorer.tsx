@@ -24,6 +24,11 @@ import { getItemOverview } from "@/scripts/helpers/getItemOverview";
 import { queueAndPlayAlbum } from "@/scripts/helpers/queueAndPlayAlbum";
 import Header from "@/components/header";
 import { useFocusedItem } from "@/components/FocusedItemProvider";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import {
+  getRoundedMinuteFromMicroseconds,
+  getRoundedMinute,
+} from "@/scripts/helpers/getMinuteValue";
 
 type ViewMode = "flatlist" | "scrollview";
 
@@ -44,7 +49,8 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
   const router = useRouter();
 
   // Playback control functions from context
-  const { playTrack, setQueueItems, currentTrack } = usePlayback();
+  const { playTrack, setQueueItems, currentTrack, updateQueueItems } =
+    usePlayback();
 
   const createTwoButtonAlert = () =>
     Alert.alert("Alert Title", "My Alert Msg", [
@@ -104,13 +110,21 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
   return (
     <>
       <Header />
-      {(viewMode === "flatlist") && (
+      {viewMode === "flatlist" && (
         <FlatList
           data={data}
           contentContainerStyle={{ gap: 30, paddingLeft: 80, paddingRight: 80 }}
           ListHeaderComponent={() => (
             <View>
-              <Text style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}>Favourites</Text>
+              <Text
+                style={{
+                  fontFamily: "IBM Plex Mono",
+                  fontSize: 14,
+                  color: "white",
+                }}
+              >
+                Item
+              </Text>
             </View>
           )}
           renderItem={({ item }) => (
@@ -129,8 +143,8 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
                 >
                   <Image
                     style={{
-                      width: 100,
-                      height: 100,
+                      width: 80,
+                      height: 80,
                       borderRadius: 5,
                     }}
                     source={{
@@ -140,31 +154,112 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
                   <View style={{ flexDirection: "row", gap: 5 }}>
                     <View style={{ flexDirection: "column", gap: 5 }}>
                       <Text
-                        style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
-                      >{item.AlbumArtist}</Text>
+                        style={{
+                          fontFamily: "IBM Plex Mono",
+                          fontSize: 14,
+                          color: "white",
+                        }}
+                      >
+                        {item.AlbumArtist}
+                      </Text>
                       <Text
-                        style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
-                      >{item.Name}</Text>
+                        style={{
+                          fontFamily: "IBM Plex Mono",
+                          fontSize: 14,
+                          color: "white",
+                        }}
+                      >
+                        {item.Name}
+                      </Text>
                     </View>
-
+                    <View>
+                      <Pressable
+                        onPress={async () => {
+                          if (!item || !jellyfinApi) return;
+                          try {
+                            if (item.UserData?.IsFavorite) {
+                              await jellyfinApi.unmarkItemAsFavorite(item.Id);
+                            } else {
+                              await jellyfinApi.markItemAsFavorite(item.Id);
+                            }
+                            // Optimistically update the data state to reflect the favorite status change
+                            setData(
+                              (prevData) =>
+                                prevData?.map((i): JellyfinItem => {
+                                  if (i.Id === item.Id) {
+                                    return {
+                                      ...i,
+                                      UserData: i.UserData
+                                        ? {
+                                            ...i.UserData,
+                                            IsFavorite: !i.UserData.IsFavorite,
+                                          }
+                                        : {
+                                            IsFavorite: true,
+                                            ItemId: i.Id,
+                                            PlayCount: 0,
+                                            Played: false,
+                                            PlayedAt: "",
+                                            PlayedAtTicks: 0,
+                                          },
+                                    };
+                                  }
+                                  return i;
+                                }) || null,
+                            );
+                          } catch (err) {
+                            console.error("Failed to toggle favorite:", err);
+                          }
+                        }}
+                        style={{}}
+                      >
+                        {item?.UserData?.IsFavorite ? (
+                          <Ionicons name="heart" size={36} color="red" />
+                        ) : (
+                          <Ionicons
+                            name="heart-outline"
+                            size={36}
+                            color="grey"
+                          />
+                        )}
+                      </Pressable>
+                    </View>
                     <Text
-                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
-                    >{item.Type}</Text>
+                      style={{
+                        fontFamily: "IBM Plex Mono",
+                        fontSize: 14,
+                        color: "white",
+                      }}
+                    >
+                      {item.ProductionYear}
+                    </Text>
                     <Text
-                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
-                    >{item.ProductionYear}</Text>
+                      style={{
+                        fontFamily: "IBM Plex Mono",
+                        fontSize: 14,
+                        color: "white",
+                      }}
+                    >
+                      {getRoundedMinuteFromMicroseconds(item.RunTimeTicks || 0)}
+                    </Text>
                     <Text
-                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
-                    >{item.RunTimeTicks}</Text>
+                      style={{
+                        fontFamily: "IBM Plex Mono",
+                        fontSize: 14,
+                        color: "white",
+                      }}
+                    >
+                      {item.ImageTags?.Primary}
+                    </Text>
                     <Text
-                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
-                    >{item.Overview}</Text>
-                    <Text
-                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
-                    >{item.ImageTags?.Primary}</Text>
-                    <Text
-                      style={{ fontFamily: "IBM Plex Mono", fontSize: 14, color: "white" }}
-                    >{item.UserData?.IsFavorite}</Text>
+                      style={{
+                        fontFamily: "IBM Plex Mono",
+                        fontSize: 14,
+                        color: "white",
+                      }}
+                    >
+                      {item.UserData?.IsFavorite}
+                    </Text>
                   </View>
                 </View>
               </Pressable>
@@ -173,7 +268,7 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
           keyExtractor={(item) => item.Id}
         />
       )}
-      {(viewMode === "scrollview") && (
+      {viewMode === "scrollview" && (
         <ScrollView
           focusable={true}
           pagingEnabled={true}
@@ -283,7 +378,8 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
                     uri: `${AUTH_URL}/Items/${item.Id}/Images/Primary`, // Replace with base URL variable
                   }}
                 />
-                <View style={{ paddingTop: 10 }}>
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                <View style={{ paddingTop: 10, flexDirection: "column" }}>
                   <MarqueeText
                     text={item.AlbumArtist || "Unknown Artist"}
                     isFocused={focusedItem?.Id === item.Id}
@@ -304,6 +400,54 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
                         focusedItem?.Id === item.Id ? "black" : "#ffffffff",
                     }}
                   />
+                </View>
+                {/* TODO: A pressable in a pressable is crazy, maybe this could sit outside the parent pressable? */}
+                <Pressable
+                  onPress={async () => {
+                    if (!item || !jellyfinApi) return;
+                    try {
+                      if (item.UserData?.IsFavorite) {
+                        await jellyfinApi.unmarkItemAsFavorite(item.Id);
+                      } else {
+                        await jellyfinApi.markItemAsFavorite(item.Id);
+                      }
+                      // Optimistically update the data state to reflect the favorite status change
+                      setData(
+                        (prevData) =>
+                          prevData?.map((i): JellyfinItem => {
+                            if (i.Id === item.Id) {
+                              return {
+                                ...i,
+                                UserData: i.UserData
+                                  ? {
+                                      ...i.UserData,
+                                      IsFavorite: !i.UserData.IsFavorite,
+                                    }
+                                  : {
+                                      IsFavorite: true,
+                                      ItemId: i.Id,
+                                      PlayCount: 0,
+                                      Played: false,
+                                      PlayedAt: "",
+                                      PlayedAtTicks: 0,
+                                    },
+                              };
+                            }
+                            return i;
+                          }) || null,
+                      );
+                    } catch (err) {
+                      console.error("Failed to toggle favorite:", err);
+                    }
+                  }}
+                  style={{ marginTop: 10, right: -30, alignSelf: "flex-start", zIndex: 1000 }}
+                >
+                  {item?.UserData?.IsFavorite ? (
+                    <Ionicons name="heart" size={24} color="red" />
+                  ) : (
+                    <Ionicons name="heart-outline" size={24} color="grey" />
+                  )}
+                </Pressable>
                 </View>
               </View>
             </Pressable>
