@@ -110,23 +110,66 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
   return (
     <>
       <Header />
+      <View
+        style={{
+          position: "fixed",
+          marginTop: 55,
+          paddingTop: 10,
+          paddingBottom: 10,
+          left: 80,
+          flexDirection: "row",
+          gap: 10,
+          width: "100%",
+          zIndex: 1000,
+          backgroundColor: "#171717",
+        }}
+      >
+        <View
+          style={{
+            width: 390,
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "IBM Plex Mono",
+              fontSize: 14,
+              color: "white",
+            }}
+          >
+            Item
+          </Text>
+        </View>
+        <View
+          style={{
+            paddingRight: 44,
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: "IBM Plex Mono",
+              fontSize: 14,
+              color: "white",
+            }}
+          >
+            Year
+          </Text>
+        </View>
+        <View>
+          <Text
+            style={{
+              fontFamily: "IBM Plex Mono",
+              fontSize: 14,
+              color: "white",
+            }}
+          >
+            Runtime
+          </Text>
+        </View>
+      </View>
       {viewMode === "flatlist" && (
         <FlatList
           data={data}
-          contentContainerStyle={{ gap: 30, paddingLeft: 80, paddingRight: 80 }}
-          ListHeaderComponent={() => (
-            <View>
-              <Text
-                style={{
-                  fontFamily: "IBM Plex Mono",
-                  fontSize: 14,
-                  color: "white",
-                }}
-              >
-                Item
-              </Text>
-            </View>
-          )}
+          contentContainerStyle={{ gap: 20, paddingLeft: 80, paddingRight: 80, marginTop: 40 }}
           renderItem={({ item }) => (
             <View>
               <Pressable
@@ -143,92 +186,134 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
                 >
                   <Image
                     style={{
-                      width: 80,
-                      height: 80,
+                      width: 50,
+                      height: 50,
                       borderRadius: 5,
                     }}
                     source={{
                       uri: `${AUTH_URL}/Items/${item.Id}/Images/Primary`,
                     }}
                   />
-                  <View style={{ flexDirection: "row", gap: 5 }}>
-                    <View style={{ flexDirection: "column", gap: 5 }}>
-                      <Text
-                        style={{
-                          fontFamily: "IBM Plex Mono",
-                          fontSize: 14,
-                          color: "white",
-                        }}
-                      >
-                        {item.AlbumArtist}
-                      </Text>
-                      <Text
-                        style={{
-                          fontFamily: "IBM Plex Mono",
-                          fontSize: 14,
-                          color: "white",
-                        }}
-                      >
-                        {item.Name}
-                      </Text>
-                    </View>
-                    <View>
-                      <Pressable
-                        onPress={async () => {
-                          if (!item || !jellyfinApi) return;
-                          try {
-                            if (item.UserData?.IsFavorite) {
-                              await jellyfinApi.unmarkItemAsFavorite(item.Id);
-                            } else {
-                              await jellyfinApi.markItemAsFavorite(item.Id);
-                            }
-                            // Optimistically update the data state to reflect the favorite status change
-                            setData(
-                              (prevData) =>
-                                prevData?.map((i): JellyfinItem => {
-                                  if (i.Id === item.Id) {
-                                    return {
-                                      ...i,
-                                      UserData: i.UserData
-                                        ? {
-                                            ...i.UserData,
-                                            IsFavorite: !i.UserData.IsFavorite,
-                                          }
-                                        : {
-                                            IsFavorite: true,
-                                            ItemId: i.Id,
-                                            PlayCount: 0,
-                                            Played: false,
-                                            PlayedAt: "",
-                                            PlayedAtTicks: 0,
-                                          },
-                                    };
-                                  }
-                                  return i;
-                                }) || null,
-                            );
-                          } catch (err) {
-                            console.error("Failed to toggle favorite:", err);
-                          }
-                        }}
-                        style={{}}
-                      >
-                        {item?.UserData?.IsFavorite ? (
-                          <Ionicons name="heart" size={36} color="red" />
-                        ) : (
-                          <Ionicons
-                            name="heart-outline"
-                            size={36}
-                            color="grey"
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      gap: 5,
+                      alignItems: "center",
+                    }}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        gap: 5,
+                        alignItems: "center",
+                      }}
+                    >
+                      <View style={{}}>
+                        <Text
+                          style={{
+                            fontFamily: "IBM Plex Mono",
+                            fontSize: 14,
+                            color: "white",
+                          }}
+                        >
+                          <MarqueeText
+                            text={item.AlbumArtist || "Unknown Artist"}
+                            isFocused={focusedItem?.Id === item.Id}
+                            width={250}
+                            style={{
+                              fontFamily: "IBM Plex Mono",
+                              color:
+                                focusedItem?.Id === item.Id
+                                  ? "black"
+                                  : "#ffffffff",
+                            }}
                           />
-                        )}
-                      </Pressable>
+                        </Text>
+                        <Text
+                          style={{
+                            fontFamily: "IBM Plex Mono",
+                            fontSize: 14,
+                            color: "white",
+                          }}
+                        >
+                          <MarqueeText
+                            text={item.Name || "Unknown Name"}
+                            isFocused={focusedItem?.Id === item.Id}
+                            width={250}
+                            style={{
+                              fontFamily: "IBM Plex Mono",
+                              color:
+                                focusedItem?.Id === item.Id
+                                  ? "black"
+                                  : "#ffffffff",
+                            }}
+                          />
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          paddingRight: 44,
+                        }}
+                      >
+                        <Pressable
+                          onPress={async () => {
+                            if (!item || !jellyfinApi) return;
+                            try {
+                              if (item.UserData?.IsFavorite) {
+                                await jellyfinApi.unmarkItemAsFavorite(item.Id);
+                              } else {
+                                await jellyfinApi.markItemAsFavorite(item.Id);
+                              }
+                              // Optimistically update the data state to reflect the favorite status change
+                              setData(
+                                (prevData) =>
+                                  prevData?.map((i): JellyfinItem => {
+                                    if (i.Id === item.Id) {
+                                      return {
+                                        ...i,
+                                        UserData: i.UserData
+                                          ? {
+                                              ...i.UserData,
+                                              IsFavorite:
+                                                !i.UserData.IsFavorite,
+                                            }
+                                          : {
+                                              IsFavorite: true,
+                                              ItemId: i.Id,
+                                              PlayCount: 0,
+                                              Played: false,
+                                              PlayedAt: "",
+                                              PlayedAtTicks: 0,
+                                            },
+                                      };
+                                    }
+                                    return i;
+                                  }) || null,
+                              );
+                            } catch (err) {
+                              console.error("Failed to toggle favorite:", err);
+                            }
+                          }}
+                          style={{}}
+                        >
+                          {item?.UserData?.IsFavorite ? (
+                            <Ionicons name="heart" size={36} color="red" />
+                          ) : (
+                            <Ionicons
+                              name="heart-outline"
+                              size={36}
+                              color="grey"
+                            />
+                          )}
+                        </Pressable>
+                      </View>
                     </View>
                     <Text
                       style={{
                         fontFamily: "IBM Plex Mono",
                         fontSize: 14,
                         color: "white",
+                        paddingRight: 44,
                       }}
                     >
                       {item.ProductionYear}
@@ -238,27 +323,10 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
                         fontFamily: "IBM Plex Mono",
                         fontSize: 14,
                         color: "white",
+                        paddingRight: 44,
                       }}
                     >
                       {getRoundedMinuteFromMicroseconds(item.RunTimeTicks || 0)}
-                    </Text>
-                    <Text
-                      style={{
-                        fontFamily: "IBM Plex Mono",
-                        fontSize: 14,
-                        color: "white",
-                      }}
-                    >
-                      {item.ImageTags?.Primary}
-                    </Text>
-                    <Text
-                      style={{
-                        fontFamily: "IBM Plex Mono",
-                        fontSize: 14,
-                        color: "white",
-                      }}
-                    >
-                      {item.UserData?.IsFavorite}
                     </Text>
                   </View>
                 </View>
@@ -379,75 +447,80 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
                   }}
                 />
                 <View style={{ flexDirection: "row", gap: 10 }}>
-                <View style={{ paddingTop: 10, flexDirection: "column" }}>
-                  <MarqueeText
-                    text={item.AlbumArtist || "Unknown Artist"}
-                    isFocused={focusedItem?.Id === item.Id}
-                    width={250}
-                    style={{
-                      fontFamily: "IBM Plex Mono",
-                      color:
-                        focusedItem?.Id === item.Id ? "black" : "#ffffffff",
-                    }}
-                  />
-                  <MarqueeText
-                    text={item.Name}
-                    isFocused={focusedItem?.Id === item.Id}
-                    width={250}
-                    style={{
-                      fontFamily: "IBM Plex Mono",
-                      color:
-                        focusedItem?.Id === item.Id ? "black" : "#ffffffff",
-                    }}
-                  />
-                </View>
-                {/* TODO: A pressable in a pressable is crazy, maybe this could sit outside the parent pressable? */}
-                <Pressable
-                  onPress={async () => {
-                    if (!item || !jellyfinApi) return;
-                    try {
-                      if (item.UserData?.IsFavorite) {
-                        await jellyfinApi.unmarkItemAsFavorite(item.Id);
-                      } else {
-                        await jellyfinApi.markItemAsFavorite(item.Id);
+                  <View style={{ paddingTop: 10, flexDirection: "column" }}>
+                    <MarqueeText
+                      text={item.AlbumArtist || "Unknown Artist"}
+                      isFocused={focusedItem?.Id === item.Id}
+                      width={250}
+                      style={{
+                        fontFamily: "IBM Plex Mono",
+                        color:
+                          focusedItem?.Id === item.Id ? "black" : "#ffffffff",
+                      }}
+                    />
+                    <MarqueeText
+                      text={item.Name}
+                      isFocused={focusedItem?.Id === item.Id}
+                      width={250}
+                      style={{
+                        fontFamily: "IBM Plex Mono",
+                        color:
+                          focusedItem?.Id === item.Id ? "black" : "#ffffffff",
+                      }}
+                    />
+                  </View>
+                  {/* TODO: A pressable in a pressable is crazy, maybe this could sit outside the parent pressable? */}
+                  <Pressable
+                    onPress={async () => {
+                      if (!item || !jellyfinApi) return;
+                      try {
+                        if (item.UserData?.IsFavorite) {
+                          await jellyfinApi.unmarkItemAsFavorite(item.Id);
+                        } else {
+                          await jellyfinApi.markItemAsFavorite(item.Id);
+                        }
+                        // Optimistically update the data state to reflect the favorite status change
+                        setData(
+                          (prevData) =>
+                            prevData?.map((i): JellyfinItem => {
+                              if (i.Id === item.Id) {
+                                return {
+                                  ...i,
+                                  UserData: i.UserData
+                                    ? {
+                                        ...i.UserData,
+                                        IsFavorite: !i.UserData.IsFavorite,
+                                      }
+                                    : {
+                                        IsFavorite: true,
+                                        ItemId: i.Id,
+                                        PlayCount: 0,
+                                        Played: false,
+                                        PlayedAt: "",
+                                        PlayedAtTicks: 0,
+                                      },
+                                };
+                              }
+                              return i;
+                            }) || null,
+                        );
+                      } catch (err) {
+                        console.error("Failed to toggle favorite:", err);
                       }
-                      // Optimistically update the data state to reflect the favorite status change
-                      setData(
-                        (prevData) =>
-                          prevData?.map((i): JellyfinItem => {
-                            if (i.Id === item.Id) {
-                              return {
-                                ...i,
-                                UserData: i.UserData
-                                  ? {
-                                      ...i.UserData,
-                                      IsFavorite: !i.UserData.IsFavorite,
-                                    }
-                                  : {
-                                      IsFavorite: true,
-                                      ItemId: i.Id,
-                                      PlayCount: 0,
-                                      Played: false,
-                                      PlayedAt: "",
-                                      PlayedAtTicks: 0,
-                                    },
-                              };
-                            }
-                            return i;
-                          }) || null,
-                      );
-                    } catch (err) {
-                      console.error("Failed to toggle favorite:", err);
-                    }
-                  }}
-                  style={{ marginTop: 10, right: -30, alignSelf: "flex-start", zIndex: 1000 }}
-                >
-                  {item?.UserData?.IsFavorite ? (
-                    <Ionicons name="heart" size={24} color="red" />
-                  ) : (
-                    <Ionicons name="heart-outline" size={24} color="grey" />
-                  )}
-                </Pressable>
+                    }}
+                    style={{
+                      marginTop: 10,
+                      right: -30,
+                      alignSelf: "flex-start",
+                      zIndex: 1000,
+                    }}
+                  >
+                    {item?.UserData?.IsFavorite ? (
+                      <Ionicons name="heart" size={24} color="red" />
+                    ) : (
+                      <Ionicons name="heart-outline" size={24} color="grey" />
+                    )}
+                  </Pressable>
                 </View>
               </View>
             </Pressable>

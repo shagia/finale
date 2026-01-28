@@ -29,10 +29,10 @@ export function getRoundedMinuteFromMicroseconds(timeInMicroseconds: number): st
     if (hours > 0) {
         const formattedHours = String(hours).padStart(2, '0');
         const formattedMinutes = String(minutes).padStart(2, '0');
-        return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+        return `${formattedHours}h:${formattedMinutes}m:${formattedSeconds}s`;
     } else {
         const formattedMinutes = String(minutes).padStart(2, '0');
-        return `${formattedMinutes}:${formattedSeconds}`;
+        return `${formattedMinutes}m:${formattedSeconds}s`;
     }
 }
 
