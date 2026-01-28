@@ -148,11 +148,11 @@ export default function PlayingPage() {
               <View
                 style={{
                   position: "absolute",
-                  top: -40,
+                  top: -50,
                   left: 0,
                   flexDirection: "row",
+                  alignItems: "center",
                   gap: 20,
-                  backgroundColor: "black",
                 }}
               >
                 <Pressable onPress={async () => {
