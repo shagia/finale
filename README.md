@@ -2,8 +2,9 @@
   <img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/hero1.png" alt="Finale logo" width="100%">
 </p>
 
-<div style="padding-bottom: 10px" align="center"><img src="https://img.shields.io/github/license/shagia/finale?style=plastic&color=%232B2B2B
-"><span style="padding-right:3%"></span><img src="https://img.shields.io/github/commit-activity/w/shagia/finale?style=plastic&color=%232B2B2B"></div>
+<div style="padding-bottom: 10px" align="center"><img src="https://img.shields.io/github/license/shagia/finale?style=plastic&color=%232B2B2B">
+<span style="padding-right:3%"></span>
+<img src="https://img.shields.io/github/commit-activity/w/shagia/finale?style=plastic&color=%232B2B2B"></div>
 
 <div align="center">Finale is an in-development, self-hosted music player designed for large screens with a focus on information display utilizing the Jellyfin Media System, and built with React Native and Expo.</div>
 
@@ -36,7 +37,7 @@ Finale is a software that utilizes the Jellyfin Media Server to exclusively play
 - A Jellyfin library that only contains music
 - An API token from your Jellyfin instance
 
-There is no logic handling for multiple libraries or non-Music libraries, Finale currently grabs *any* present item from your library. It's recommended to deploy a library with only music until I introduce the logic to pick libraries and skip libraries that aren't Music related.
+There is no logic handling for multiple libraries or non-Music libraries, Finale currently grabs _any_ present item from your library. It's recommended to deploy a library with only music until I introduce the logic to pick libraries and skip libraries that aren't Music related.
 
 ### Constants
 
@@ -47,19 +48,22 @@ There is no logic handling for multiple libraries or non-Music libraries, Finale
 
 ```ts
 //  auth-headers.tsx
-export const AUTH_URL = 'your-jellyfin-url';
-export const AUTH_TOKEN = 'your-api-token';
+export const AUTH_URL = "your-jellyfin-url";
+export const AUTH_TOKEN = "your-api-token";
 export const AUTH_HEADERS = {
-  'Authorization': 'MediaBrowser Client="Jellyfin%20Web", Device="Firefox", DeviceId="your-device-id", Version="10.11.2", Token="' + AUTH_TOKEN + '"',
+  Authorization:
+    'MediaBrowser Client="Jellyfin%20Web", Device="Firefox", DeviceId="your-device-id", Version="10.11.2", Token="' +
+    AUTH_TOKEN +
+    '"',
 };
 ```
 
 ```ts
 // user-details.tsx
 export const USER_AUTH = {
-    username: 'your-username',
-    password: 'your-password',
-}
+  username: "your-username",
+  password: "your-password",
+};
 ```
 
 ### Running
