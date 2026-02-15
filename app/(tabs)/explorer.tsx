@@ -83,8 +83,8 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
     try {
       // No need to call login() - getRandomItems() will ensure authentication automatically
       const apiData = await jellyfinApi.getRandomItems();
-      console.log("Jellyfin Data:", apiData);
       setData(apiData);
+      console.log("Jellyfin Data:", apiData);
       return apiData;
     } catch (error) {
       console.error("Error fetching data from Jellyfin:", error);
@@ -110,71 +110,115 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
   return (
     <>
       <Header />
-      <View
-        style={{
-          position: "fixed",
-          marginTop: 55,
-          paddingTop: 10,
-          paddingBottom: 10,
-          left: 80,
-          flexDirection: "row",
-          gap: 10,
-          width: "100%",
-          zIndex: 1000,
-          backgroundColor: "#171717",
-        }}
-      >
+      {viewMode === "flatlist" && (
         <View
           style={{
-            width: 390,
+            position: "fixed",
+            marginTop: 55,
+            paddingTop: 10,
+            paddingBottom: 10,
+            left: 80,
+            flexDirection: "row",
+            gap: 10,
+            width: "100%",
+            zIndex: 1000,
+            backgroundColor: "#171717",
           }}
         >
-          <Text
+          <View
             style={{
-              fontFamily: "IBM Plex Mono",
-              fontSize: 14,
-              color: "white",
+              width: 390,
             }}
           >
-            Item
-          </Text>
-        </View>
-        <View
-          style={{
-            paddingRight: 44,
-          }}
-        >
-          <Text
+            <Text
+              style={{
+                fontFamily: "IBM Plex Mono",
+                fontSize: 14,
+                color: "white",
+              }}
+            >
+              Item
+            </Text>
+          </View>
+          <View
             style={{
-              fontFamily: "IBM Plex Mono",
-              fontSize: 14,
-              color: "white",
+              paddingRight: 44,
             }}
           >
-            Year
-          </Text>
+            <Text
+              style={{
+                fontFamily: "IBM Plex Mono",
+                fontSize: 14,
+                color: "white",
+              }}
+            >
+              Year
+            </Text>
+          </View>
+          <View>
+            <Text
+              style={{
+                fontFamily: "IBM Plex Mono",
+                fontSize: 14,
+                color: "white",
+              }}
+            >
+              Runtime
+            </Text>
+          </View>
         </View>
-        <View>
-          <Text
-            style={{
-              fontFamily: "IBM Plex Mono",
-              fontSize: 14,
-              color: "white",
-            }}
-          >
-            Runtime
-          </Text>
-        </View>
-      </View>
+      )}
       {viewMode === "flatlist" && (
         <FlatList
           data={data}
-          contentContainerStyle={{ gap: 20, paddingLeft: 80, paddingRight: 80, marginTop: 40 }}
+          initialNumToRender={data?.length} // This will soon be tied to a max item variable set by the user
+          contentContainerStyle={{
+            gap: 8,
+            paddingLeft: 80,
+            paddingRight: 80,
+            marginTop: 40,
+          }}
           renderItem={({ item }) => (
-            <View>
+            <View style={{ borderTopWidth: 0, borderTopColor: "#3C3C3C", borderBottomWidth: 2, borderBottomColor: "#3C3C3C", paddingTop: 0, paddingBottom: 8 }}>
               <Pressable
-                onPress={() => {
-                  console.log(item);
+                onPress={async () => {
+                  try {
+                    const albumItems = await queueAndPlayAlbum(
+                      item.Id,
+                      item.Name,
+                      jellyfinApi,
+                      setQueueItems,
+                      playTrack,
+                    );
+  
+                    Alert.alert(
+                      "Item Pressed",
+                      `You pressed on ${item.Name}, ${item.Id}. Queue created with ${albumItems.length} tracks.`,
+                    );
+                  } catch (error) {
+                    console.error("Error queueing album:", error);
+                    Alert.alert("Error", `Failed to queue album: ${item.Name}`);
+                  }
+                }}
+                onLongPress={() => {
+                  console.log(`Long Pressed ${item.Name}`);
+                }}
+                onFocus={() => {
+                  console.log(`Focused on ${item.Name}`);
+                  setFocusedItem(item);
+                  // getMediaInfo(item.Id)
+                }}
+                onBlur={() => {
+                  console.log(`Blurred ${item.Name}`);
+                  // Not the same as hovering out. You hovering out implies you're no longer focused on any item at all, Blurring out implies you're focused on the next item. Nulling for blurring would break the flow of focus.
+                }}
+                onHoverIn={() => {
+                  console.log(`Hovered on ${item.Name}`);
+                  setFocusedItem(item);
+                }}
+                onHoverOut={() => {
+                  console.log(`Hovered out of ${item.Name}`);
+                  setFocusedItem(null);
                 }}
               >
                 <View
