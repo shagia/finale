@@ -4,7 +4,7 @@
 
 <div style="padding-bottom: 13px" align="center"><img src="https://img.shields.io/github/license/shagia/finale?style=plastic&color=%232B2B2B">
 <span style="padding-right:3%"></span>
-<img src="https://img.shields.io/github/commit-activity/w/shagia/finale?style=plastic&color=%232B2B2B"></div>
+<img src="https://img.shields.io/github/commit-activity/m/shagia/finale?style=plastic&color=%232B2B2B"></div>
 
 <div align="center">Finale is an in-development, self-hosted music player designed for large screens with a focus on information display utilizing the Jellyfin Media System, and built with React Native and Expo.</div>
 
