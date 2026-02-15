@@ -1,19 +1,32 @@
-
-
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/hero1.png" alt="Finale logo" width="100%">
 </p>
 
-Finale is an early development streamer for the Jellyfin Media Server. It's in an incredibly early state right now, and a lot of things are missing, and maybe broken.
+<div align="center">Finale is an in-development, self-hosted music player designed for large screens with a focus on information display that utilizes the Jellyfin Media System as its backend, built with React Native and Expo.</div>
 
-## Getting Started with Development
+<hr style="border: none; height: 4px; background-color:rgb(88, 88, 88); margin: 20px 0 20px 0;"></hr>
+
+<table>
+<tr>
+<td><img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/screenshots/Explorer%20Page%20demo.png" alt="Image 1"></td>
+<td><img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/screenshots/Home%20Page%20demo.png" alt="Image 2"></td>
+</tr>
+</table>
+
+### Getting Started with Development
+
+<hr style="border: none; height: 4px; background-color:rgb(88, 88, 88); margin: 20px 0 20px 0;"></hr>
+
 <p align="center">
 <img src="https://raw.githubusercontent.com/shagia/finale/ce112ab62c7afca967e793082666f6989eca756e/public/images/readme/hero4.jpg" width="100%">
-</p> 
+</p>
 
-## Prerequisites
+### Prerequisites
+
+<hr style="border: none; height: 4px; background-color:rgb(88, 88, 88); margin: 20px 0 20px 0;"></hr>
+
 Finale is a software that utilizes the Jellyfin Media Server to exclusively play music. Requirements are:
+
 - Any OS that has a Webview
 - Xcode (for TV or iOS development)
 - A local or remote Jellyfin instance, local is recommended for now
@@ -22,10 +35,12 @@ Finale is a software that utilizes the Jellyfin Media Server to exclusively play
 
 There is no logic handling for multiple libraries or non-Music libraries, Finale currently grabs *any* present item from your library. It's recommended to deploy a library with only music until I introduce the logic to pick libraries and skip libraries that aren't Music related.
 
-## Constants
-- `cd` into the project
+### Constants
 
-- Add the following two files in `/constants/secrets`:
+<hr style="border: none; height: 4px; background-color:rgb(88, 88, 88); margin: 20px 0 20px 0;"></hr>
+
+- `cd` into the project
+- Add the following two files in`/constants/secrets`:
 
 ```ts
 //  auth-headers.tsx
@@ -44,8 +59,9 @@ export const USER_AUTH = {
 }
 ```
 
+### Running
 
-## Running
+<hr style="border: none; height: 4px; background-color:rgb(88, 88, 88); margin: 20px 0 20px 0;"></hr>
 
 - For TV development:
 
