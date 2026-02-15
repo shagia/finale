@@ -6,10 +6,10 @@
 
 <hr style="border: none; height: 4px; background-color:rgb(88, 88, 88); margin: 20px 0 20px 0;"></hr>
 
-<table>
+<table style="">
 <tr>
-<td><img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/screenshots/Explorer%20Page%20demo.png" alt="Image 1"></td>
-<td><img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/screenshots/Home%20Page%20demo.png" alt="Image 2"></td>
+<td><img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/screenshots/Explorer%20Page%20demo.png" alt="Finale Explorer"><p align="center">Finale Explorer</p></td>
+<td><img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/screenshots/Home%20Page%20demo.png" alt="Home Page"><p align="center">Home Page</p></td>
 </tr>
 </table>
 
