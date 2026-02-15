@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/hero1.png" alt="Finale logo" width="100%">
 </p>
 
-<div align="center">Finale is an in-development, self-hosted music player designed for large screens with a focus on information display that utilizes the Jellyfin Media System as its backend, built with React Native and Expo.</div>
+<div align="center">Finale is an in-development, self-hosted music player designed for large screens with a focus on information display utilizing the Jellyfin Media System, and built with React Native and Expo.</div>
 
 <hr style="border: none; height: 4px; background-color:rgb(88, 88, 88); margin: 20px 0 20px 0;"></hr>
 
