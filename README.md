@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/hero1.png" alt="Finale logo" width="100%">
 </p>
 
-<div style="padding-bottom: 10px" align="center"><img src="https://img.shields.io/github/license/shagia/finale?style=plastic&color=%232B2B2B">
+<div style="padding-bottom: 13px" align="center"><img src="https://img.shields.io/github/license/shagia/finale?style=plastic&color=%232B2B2B">
 <span style="padding-right:3%"></span>
 <img src="https://img.shields.io/github/commit-activity/w/shagia/finale?style=plastic&color=%232B2B2B"></div>
 
