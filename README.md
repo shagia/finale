@@ -2,9 +2,19 @@
   <img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/hero1.png" alt="Finale logo" width="100%">
 </p>
 
-<div style="padding-bottom: 13px" align="center"><img src="https://img.shields.io/github/license/shagia/finale?style=plastic&color=%232B2B2B">
-<span style="padding-right:3%"></span>
-<img src="https://img.shields.io/github/commit-activity/m/shagia/finale?style=plastic&color=%232B2B2B"></div>
+<div style="padding-bottom: 13px" align="center">
+🎶 
+<span style="padding-right:10px"></span>
+Listening in Large
+<span style="padding-right:10px"></span>
+ 🎶
+<br>
+<br>
+
+<img src="https://img.shields.io/github/license/shagia/finale?style=plastic&color=%232B2B2B">
+<span style="padding-right:10px"></span>
+<img src="https://img.shields.io/github/commit-activity/m/shagia/finale?style=plastic&color=%232B2B2B">
+</div>
 
 <div align="center">Finale is an in-development, self-hosted music player designed for large screens with a focus on information display utilizing the Jellyfin Media System, and built with React Native and Expo.</div>
 
@@ -16,6 +26,10 @@
 <td><img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/screenshots/Home%20Page%20demo.png" alt="Home Page"><p align="center">Home Page</p></td>
 </tr>
 </table>
+
+### ⚠️ Note on usability
+
+<div align="">Finale is in a very basic stage. Many basic quality of life features are simply not implemented yet. In this state, it's encouraged that it's used solely for developmental and testing purposes.</div>
 
 ### Getting Started with Development
 
