@@ -114,11 +114,7 @@ export default function Header({ page, pageType, pageTitle, viewMode, onViewMode
                     OptionTouchableComponent: Pressable,
                     optionTouchable: {
                       style: ({ hovered }: { hovered?: boolean }) => ({
-                        backgroundColor: hovered
-                          ? "rgba(0, 0, 0, 0.1)"
-                          : "transparent",
-                        padding: 8,
-                        borderRadius: 8,
+                        // Hover style
                       }),
                     },
                     optionWrapper: {
@@ -129,7 +125,10 @@ export default function Header({ page, pageType, pageTitle, viewMode, onViewMode
                       borderRadius: 8,
                     },
                   }}
-                  onSelect={() => onViewModeChange?.("scrollview")}
+                  onSelect={() => {
+                    onViewModeChange?.("scrollview");
+                    return false;
+                  }}
                 >
                   <View style={{ alignItems: "center" }}>
                     <Ionicons
@@ -156,11 +155,7 @@ export default function Header({ page, pageType, pageTitle, viewMode, onViewMode
                     OptionTouchableComponent: Pressable,
                     optionTouchable: {
                       style: ({ hovered }: { hovered?: boolean }) => ({
-                        backgroundColor: hovered
-                          ? "rgba(0, 0, 0, 0.1)"
-                          : "transparent",
-                        padding: 8,
-                        borderRadius: 8,
+                        // Hover style
                       }),
                     },
                     optionWrapper: {
@@ -171,7 +166,10 @@ export default function Header({ page, pageType, pageTitle, viewMode, onViewMode
                       borderRadius: 8,
                     },
                   }}
-                  onSelect={() => onViewModeChange?.("flatlist")}
+                  onSelect={() => {
+                    onViewModeChange?.("flatlist");
+                    return false;
+                  }}
                 >
                   <View style={{ alignItems: "center" }}>
                     <Ionicons
@@ -193,6 +191,16 @@ export default function Header({ page, pageType, pageTitle, viewMode, onViewMode
                   </View>
                 </MenuOption>
               </View>
+              <MenuOption>
+                <Text
+                  style={{
+                    color: "#9c9c9cff",
+                    fontFamily: "SpaceMono",
+                  }}
+                >
+                  Refresh
+                </Text>
+              </MenuOption>
               <MenuOption>
                 <Text
                   style={{
