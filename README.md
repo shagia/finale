@@ -3,14 +3,6 @@
 </p>
 
 <div style="padding-bottom:10px" align="center">
-🎶 
-<span style="padding-right:15px"></span>
-Listening in Large
-<span style="padding-right:15px"></span>
- 🎶
-<br>
-<br>
-
 <img src="https://img.shields.io/github/license/shagia/finale?style=plastic&color=%232B2B2B">
 <span style="padding-right:10px"></span>
 <img src="https://img.shields.io/github/commit-activity/m/shagia/finale?style=plastic&color=%232B2B2B">
