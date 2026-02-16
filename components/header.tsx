@@ -11,13 +11,17 @@ import {
 
 // TODO: The conditional logic for rendering elements here is really lazy. There could be shorter, more readable logic that defines what elements should be rendered based on what page is being viewed.
 
+export type ViewMode = "flatlist" | "scrollview";
+
 interface HeaderProps {
   page?: string;
   pageType?: string;
   pageTitle?: string;
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
 }
 
-export default function Header({ page, pageType, pageTitle }: HeaderProps) {
+export default function Header({ page, pageType, pageTitle, viewMode, onViewModeChange }: HeaderProps) {
   const router = useRouter();
   const { openDrawer } = useDrawer();
   return (
@@ -104,26 +108,84 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
               <View
                 style={{ flexDirection: "row", gap: 40, alignSelf: "center" }}
               >
-                <MenuOption style={{ flex: 1 }}>
+                <MenuOption
+                  style={{ flex: 1 }}
+                  customStyles={{
+                    OptionTouchableComponent: Pressable,
+                    optionTouchable: {
+                      style: ({ hovered }: { hovered?: boolean }) => ({
+                        backgroundColor: hovered
+                          ? "rgba(0, 0, 0, 0.1)"
+                          : "transparent",
+                        padding: 8,
+                        borderRadius: 8,
+                      }),
+                    },
+                    optionWrapper: {
+                      backgroundColor:
+                        viewMode === "scrollview"
+                          ? "rgba(0, 0, 0, 0.06)"
+                          : "transparent",
+                      borderRadius: 8,
+                    },
+                  }}
+                  onSelect={() => onViewModeChange?.("scrollview")}
+                >
                   <View style={{ alignItems: "center" }}>
-                    <Ionicons name="grid-outline" size={24} color="black" />
+                    <Ionicons
+                      name="grid-outline"
+                      size={24}
+                      color={viewMode === "scrollview" ? "#1a1a1a" : "black"}
+                    />
                     <Text
                       style={{
-                        color: "#9c9c9cff",
+                        color:
+                          viewMode === "scrollview" ? "#1a1a1a" : "#9c9c9cff",
                         fontFamily: "SpaceMono",
+                        fontWeight:
+                          viewMode === "scrollview" ? "600" : "normal",
                       }}
                     >
                       Grid
                     </Text>
                   </View>
                 </MenuOption>
-                <MenuOption style={{ flex: 1 }}>
+                <MenuOption
+                  style={{ flex: 1 }}
+                  customStyles={{
+                    OptionTouchableComponent: Pressable,
+                    optionTouchable: {
+                      style: ({ hovered }: { hovered?: boolean }) => ({
+                        backgroundColor: hovered
+                          ? "rgba(0, 0, 0, 0.1)"
+                          : "transparent",
+                        padding: 8,
+                        borderRadius: 8,
+                      }),
+                    },
+                    optionWrapper: {
+                      backgroundColor:
+                        viewMode === "flatlist"
+                          ? "rgba(0, 0, 0, 0.06)"
+                          : "transparent",
+                      borderRadius: 8,
+                    },
+                  }}
+                  onSelect={() => onViewModeChange?.("flatlist")}
+                >
                   <View style={{ alignItems: "center" }}>
-                    <Ionicons name="list-outline" size={24} color="black" />
+                    <Ionicons
+                      name="list-outline"
+                      size={24}
+                      color={viewMode === "flatlist" ? "#1a1a1a" : "black"}
+                    />
                     <Text
                       style={{
-                        color: "#9c9c9cff",
+                        color:
+                          viewMode === "flatlist" ? "#1a1a1a" : "#9c9c9cff",
                         fontFamily: "SpaceMono",
+                        fontWeight:
+                          viewMode === "flatlist" ? "600" : "normal",
                       }}
                     >
                       List

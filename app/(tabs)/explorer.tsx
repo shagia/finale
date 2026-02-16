@@ -22,15 +22,13 @@ import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
 import { usePlayback } from "@/components/PlaybackProvider";
 import { getItemOverview } from "@/scripts/helpers/getItemOverview";
 import { queueAndPlayAlbum } from "@/scripts/helpers/queueAndPlayAlbum";
-import Header from "@/components/header";
+import Header, { type ViewMode } from "@/components/header";
 import { useFocusedItem } from "@/components/FocusedItemProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   getRoundedMinuteFromMicroseconds,
   getRoundedMinute,
 } from "@/scripts/helpers/getMinuteValue";
-
-type ViewMode = "flatlist" | "scrollview";
 
 interface ExplorerProps {
   viewMode?: ViewMode;
@@ -39,7 +37,8 @@ interface ExplorerProps {
 // For debugging only. Once the functionality for a view setting is added, this will be binded to a localStorage or cookie value
 const defaultViewMode: ViewMode = "flatlist";
 
-export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
+export default function Index({ viewMode: initialViewMode = defaultViewMode }: ExplorerProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode);
   const [publicURL, setPublicURL] = useState<string | null>(null);
   const [data, setData] = useState<JellyfinItem[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -109,7 +108,10 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
   }, [currentTrack]);
   return (
     <>
-      <Header />
+      <Header
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+      />
       {viewMode === "flatlist" && (
         <View
           style={{
@@ -268,7 +270,7 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
                               fontFamily: "IBM Plex Mono",
                               color:
                                 focusedItem?.Id === item.Id
-                                  ? "black"
+                                  ? "#ffffffff"
                                   : "#ffffffff",
                             }}
                           />
@@ -288,7 +290,7 @@ export default function Index({ viewMode = defaultViewMode }: ExplorerProps) {
                               fontFamily: "IBM Plex Mono",
                               color:
                                 focusedItem?.Id === item.Id
-                                  ? "black"
+                                  ? "#ffffffff"
                                   : "#ffffffff",
                             }}
                           />
