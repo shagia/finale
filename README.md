@@ -16,7 +16,7 @@ Listening in Large
 <img src="https://img.shields.io/github/commit-activity/m/shagia/finale?style=plastic&color=%232B2B2B">
 </div>
 
-<div align="center">Finale is an in-development, self-hosted music player designed for large screens with a focus on information display utilizing the Jellyfin Media System, and built with React Native and Expo.</div>
+<div align="center">Finale is an in-development, self-hosted music player designed for large screens with an album-first focus on information display utilizing the Jellyfin Media System, and built with React Native and Expo.</div>
 
 <hr style="border: none; height: 4px; background-color:rgb(88, 88, 88); margin: 20px 0 20px 0;"></hr>
 
@@ -29,7 +29,7 @@ Listening in Large
 
 ### ⚠️ Note on usability
 
-<div align="">Finale is in a very basic stage. Many basic quality of life features are simply not implemented yet. In this state, it's encouraged that it's used solely for developmental and testing purposes.</div>
+<div align="">Finale is in a very basic stage. Many basic quality of life features are simply not implemented yet. In this state, it's encouraged that it's used solely for developmental and testing purposes. For those interested in contributing, reviewing Finale's most sought-after features is a helpful starting point.</div>
 
 ### Getting Started with Development
 
@@ -104,4 +104,27 @@ npm android # Build for Android mobile
 npm web # Run the project on web from localhost
 ```
 
----
+### Shoutouts
+
+<hr style="border: none; height: 4px; background-color:rgb(88, 88, 88); margin: 20px 0 20px 0;"></hr>
+Finale is bit of a 'passion' project with the intent of being an accessible program to the public. It must be said that there were inspirations that I got from these programs and people:
+
+#### Feishin
+
+<p style="padding-bottom: 10px">
+<img src="https://raw.githubusercontent.com/jeffvli/feishin/refs/heads/development/assets/icons/icon.png" style="padding: 0 15px 10px 0; float:left" width="100px"></img>
+One of my most used and favorite streamers, and maybe the one that inspired me to design my own just for fun. Really Spotify-esque in functionality and look, nice for if you're looking for a self-hosted streamer that supports more than Jellyfin, but Navidrome *and* the OpenSubsonic API.</p>
+
+#### Finamp (and James Harvey's documentation on the Jellyfin API)
+
+<p style="padding-bottom: 10px">
+<img src="https://raw.githubusercontent.com/UnicornsOnLSD/finamp/refs/heads/main/images/finamp.png" style="padding: 0 15px 10px 0; float:left" width="100px"></img>
+Jellyfin is a dense, confusing place with big, wonderful outcomes. It's a deeply detailed system, and that detail is shared in the API to a great degree. With no experience, having a crash course with the API only led to so much until I found that James had an awesome post about his own hard work done with the API to build Finamp, a real cream-of-the-crop player on iOS and Android.
+
+If you'd like to explore the API, his article is what kicked it all off for me. Check it out:
+https://jmshrv.com/posts/jellyfin-api/
+
+</p>
+
+<br>
+<br>

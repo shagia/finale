@@ -252,10 +252,15 @@ class JellyfinAPI {
     }
   }
 
+  /** Default page size for getRandomItems pagination */
+  static readonly RANDOM_ITEMS_PAGE_SIZE = 50;
+
   /**
-   * Get 25 random items from the Jellyfin library
+   * Get random items from the Jellyfin library with optional pagination.
+   * @param startIndex - Index to start from (0 for first page). Use data.length for "load more".
+   * @param limit - Number of items to return (default RANDOM_ITEMS_PAGE_SIZE).
    */
-  async getRandomItems(): Promise<JellyfinItem[]> {
+  async getRandomItems(startIndex = 0, limit = JellyfinAPI.RANDOM_ITEMS_PAGE_SIZE): Promise<JellyfinItem[]> {
     await this.ensureAuthenticated();
     try {
       const response = await this.axiosInstance.get('/Items', {
@@ -265,8 +270,9 @@ class JellyfinAPI {
         params: {
           UserId: this.userId,
           IncludeItemTypes: 'MusicAlbum',
-          Recursive: true, 
-          Limit: 50,
+          Recursive: true,
+          StartIndex: startIndex,
+          Limit: limit,
           SortBy: 'Random',
           fields: 'MediaStreams, Overview, ProductionYear, RunTimeTicks, AlbumArtist',
         }

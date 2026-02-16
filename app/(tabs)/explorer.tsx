@@ -22,7 +22,7 @@ import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
 import { usePlayback } from "@/components/PlaybackProvider";
 import { getItemOverview } from "@/scripts/helpers/getItemOverview";
 import { queueAndPlayAlbum } from "@/scripts/helpers/queueAndPlayAlbum";
-import { refreshItems } from "@/scripts/helpers/refreshItems";
+import { refreshItems, loadMoreItems, ITEMS_PAGE_SIZE } from "@/scripts/helpers/refreshItems";
 import Header, { type ViewMode } from "@/components/header";
 import { useFocusedItem } from "@/components/FocusedItemProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -43,6 +43,8 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
   const [publicURL, setPublicURL] = useState<string | null>(null);
   const [data, setData] = useState<JellyfinItem[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const { focusedItem, setFocusedItem } = useFocusedItem();
   const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
   const [itemOverview, setItemOverview] = useState<string | null>(null);
@@ -79,7 +81,22 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
     }
   } */ // Might just remove this, wrote it early and I think ItemInfo gets what I need for now
 
-  const fetchData = () => refreshItems(jellyfinApi, { setData, setLoading });
+  const fetchData = () => {
+    setHasMore(true);
+    return refreshItems(jellyfinApi, { setData, setLoading });
+  };
+
+  const handleLoadMore = () => {
+    if (loadingMore || !hasMore || !data?.length) return;
+    const startIndex = data.length;
+    loadMoreItems(jellyfinApi, startIndex, { setData, setLoadingMore }).then(
+      (nextItems) => {
+        if (nextItems && nextItems.length < ITEMS_PAGE_SIZE) {
+          setHasMore(false);
+        }
+      },
+    );
+  };
 
   useEffect(() => {
     fetchData();
@@ -163,6 +180,8 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
           data={data}
           initialNumToRender={data?.length} // This will soon be tied to a max item variable set by the user
           pagingEnabled={true}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
           contentContainerStyle={{
             gap: 8,
             paddingLeft: 80,
@@ -377,6 +396,14 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
           pagingEnabled={true}
           hasTVPreferredFocus
           nestedScrollEnabled={Platform.isTV}
+          onScroll={({ nativeEvent }) => {
+            const { contentOffset, contentSize, layoutMeasurement } = nativeEvent;
+            const padding = 200;
+            const isNearBottom =
+              contentOffset.y + layoutMeasurement.height >= contentSize.height - padding;
+            if (isNearBottom) handleLoadMore();
+          }}
+          scrollEventThrottle={400}
           contentContainerStyle={{
             flexGrow: 1,
             flexDirection: "row",

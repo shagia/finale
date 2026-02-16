@@ -98,7 +98,7 @@ export default function Header({ page, pageType, pageTitle, viewMode, onViewMode
                   }),
                 },
               }}
-              text="Explorer View"
+              text="Explorer View ▾"
             />
             <MenuOptions
               customStyles={{
