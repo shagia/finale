@@ -22,6 +22,7 @@ import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
 import { usePlayback } from "@/components/PlaybackProvider";
 import { getItemOverview } from "@/scripts/helpers/getItemOverview";
 import { queueAndPlayAlbum } from "@/scripts/helpers/queueAndPlayAlbum";
+import { refreshItems } from "@/scripts/helpers/refreshItems";
 import Header, { type ViewMode } from "@/components/header";
 import { useFocusedItem } from "@/components/FocusedItemProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -78,19 +79,7 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
     }
   } */ // Might just remove this, wrote it early and I think ItemInfo gets what I need for now
 
-  const fetchData = async () => {
-    try {
-      // No need to call login() - getRandomItems() will ensure authentication automatically
-      const apiData = await jellyfinApi.getRandomItems();
-      setData(apiData);
-      console.log("Jellyfin Data:", apiData);
-      return apiData;
-    } catch (error) {
-      console.error("Error fetching data from Jellyfin:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchData = () => refreshItems(jellyfinApi, { setData, setLoading });
 
   useEffect(() => {
     fetchData();
@@ -107,16 +96,15 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
     }
   }, [currentTrack]);
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <Header
         viewMode={viewMode}
         onViewModeChange={setViewMode}
+        onRefresh={() => void fetchData()}
       />
       {viewMode === "flatlist" && (
         <View
           style={{
-            position: "fixed",
-            marginTop: 55,
             paddingTop: 10,
             paddingBottom: 10,
             left: 80,
@@ -174,6 +162,7 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
         <FlatList
           data={data}
           initialNumToRender={data?.length} // This will soon be tied to a max item variable set by the user
+          pagingEnabled={true}
           contentContainerStyle={{
             gap: 8,
             paddingLeft: 80,
@@ -654,6 +643,6 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
           </Text>
         </View>
       </View>
-    </>
+    </View>
   );
 }

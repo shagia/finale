@@ -21,6 +21,7 @@ import { FocusedItemWidget } from "@/components/widgets/focusedItemWidget";
 import { AlbumOverviewWidget } from "@/components/widgets/albumOverviewWidget";
 import { NowPlayingWidget } from "@/components/widgets/nowPlayingWidget";
 import { getItemOverview } from "@/scripts/helpers/getItemOverview";
+import { refreshItems } from "@/scripts/helpers/refreshItems";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function HomePage() {
@@ -37,22 +38,7 @@ export default function HomePage() {
 
   const { playTrack, setQueueItems, currentTrack } = usePlayback();
 
-  const fetchData = async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setLoading(true);
-      }
-      // No need to call login() - getRandomItems() will ensure authentication automatically
-      const apiData = await jellyfinApi.getRandomItems();
-      console.log("Jellyfin Data:", apiData);
-      setData(apiData);
-      return apiData;
-    } catch (error) {
-      console.error("Error fetching data from Jellyfin:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchData = () => refreshItems(jellyfinApi, { setData, setLoading });
 
   useEffect(() => {
     fetchData();
@@ -117,10 +103,7 @@ export default function HomePage() {
             </Text>
             <Pressable
               style={{ paddingTop: 10, zIndex: 1000 }}
-              onPress={() => {
-                console.log("Refreshing");
-                fetchData(true);
-              }}
+              onPress={() => fetchData()}
             >
               <View>
                 <Ionicons name="refresh-outline" size={18} color="white" />

@@ -19,9 +19,10 @@ interface HeaderProps {
   pageTitle?: string;
   viewMode?: ViewMode;
   onViewModeChange?: (mode: ViewMode) => void;
+  onRefresh?: () => void | Promise<void>;
 }
 
-export default function Header({ page, pageType, pageTitle, viewMode, onViewModeChange }: HeaderProps) {
+export default function Header({ page, pageType, pageTitle, viewMode, onViewModeChange, onRefresh }: HeaderProps) {
   const router = useRouter();
   const { openDrawer } = useDrawer();
   return (
@@ -191,7 +192,12 @@ export default function Header({ page, pageType, pageTitle, viewMode, onViewMode
                   </View>
                 </MenuOption>
               </View>
-              <MenuOption>
+              <MenuOption
+                onSelect={() => {
+                  void Promise.resolve(onRefresh?.()).then(() => {});
+                  return false;
+                }}
+              >
                 <Text
                   style={{
                     color: "#9c9c9cff",
