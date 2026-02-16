@@ -85,7 +85,9 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
                 TriggerTouchableComponent: Pressable,
                 triggerTouchable: {
                   style: ({ hovered }: { hovered?: boolean }) => ({
-                    backgroundColor: hovered ? "rgba(128, 128, 128, 0.2)" : "transparent",
+                    backgroundColor: hovered
+                      ? "rgba(128, 128, 128, 0.2)"
+                      : "transparent",
                     paddingHorizontal: 10,
                     borderRadius: 6,
                   }),
@@ -93,7 +95,42 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
               }}
               text="Explorer View"
             />
-            <MenuOptions optionsContainerStyle={{ marginTop: 16 }}>
+            <MenuOptions
+              customStyles={{
+                optionsContainer: { marginTop: 16 },
+                optionsWrapper: { padding: 5 }
+              }}
+            >
+              <View
+                style={{ flexDirection: "row", gap: 40, alignSelf: "center" }}
+              >
+                <MenuOption style={{ flex: 1 }}>
+                  <View style={{ alignItems: "center" }}>
+                    <Ionicons name="grid-outline" size={24} color="black" />
+                    <Text
+                      style={{
+                        color: "#9c9c9cff",
+                        fontFamily: "SpaceMono",
+                      }}
+                    >
+                      Grid
+                    </Text>
+                  </View>
+                </MenuOption>
+                <MenuOption style={{ flex: 1 }}>
+                  <View style={{ alignItems: "center" }}>
+                    <Ionicons name="list-outline" size={24} color="black" />
+                    <Text
+                      style={{
+                        color: "#9c9c9cff",
+                        fontFamily: "SpaceMono",
+                      }}
+                    >
+                      List
+                    </Text>
+                  </View>
+                </MenuOption>
+              </View>
               <MenuOption>
                 <Text
                   style={{
@@ -112,16 +149,6 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
                   }}
                 >
                   Sort Options
-                </Text>
-              </MenuOption>
-              <MenuOption>
-                <Text
-                  style={{
-                    color: "#9c9c9cff",
-                    fontFamily: "SpaceMono",
-                  }}
-                >
-                  View Options
                 </Text>
               </MenuOption>
             </MenuOptions>
