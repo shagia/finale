@@ -2,6 +2,14 @@ import { useRouter } from "expo-router";
 import { View, Text, Image, TouchableOpacity, Pressable } from "react-native";
 import { useDrawer } from "./DrawerProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from "react-native-popup-menu";
+
+// TODO: The conditional logic for rendering elements here is really lazy. There could be shorter, more readable logic that defines what elements should be rendered based on what page is being viewed.
 
 interface HeaderProps {
   page?: string;
@@ -38,33 +46,86 @@ export default function Header({ page, pageType, pageTitle }: HeaderProps) {
         ]}
       >
         {/* TODO: Judge if the logo is a button that opens either the menu or is conditionally different based on the current page */}
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 20}}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
           {/* <Pressable onPress={() => router.back()}>
             <Text style={{ color: "#3C3C3C", fontFamily: "SpaceMono" }}>
               Back
             </Text>
           </Pressable> */}
-          <Pressable onPress={() => page === "playing" ? router.back() : openDrawer()}>
+          <Pressable
+            onPress={() => (page === "playing" ? router.back() : openDrawer())}
+          >
             {page === "playing" ? (
-              <Ionicons name="arrow-back-outline" size={36} style={{ backgroundColor: "black" }} color="white" />
+              <Ionicons
+                name="arrow-back-outline"
+                size={36}
+                style={{ backgroundColor: "black" }}
+                color="white"
+              />
             ) : (
               <Image
                 source={require("../assets/images/finale-logo.svg")}
-                style={{ width: 150, height: 10, bottom: 0, left: 0, resizeMode: "contain" }}
+                style={{
+                  width: 150,
+                  height: 10,
+                  bottom: 0,
+                  left: 0,
+                  resizeMode: "contain",
+                }}
               />
             )}
           </Pressable>
         </View>
 
         {page === "playing" || page === "home" ? null : (
-          <Text
-            style={{
-              color: "#9c9c9cff",
-              fontFamily: "SpaceMono",
-            }}
-          >
-            Explorer View
-          </Text>
+          <Menu>
+            <MenuTrigger
+              customStyles={{
+                triggerText: { color: "#9c9c9cff", fontFamily: "SpaceMono" },
+                TriggerTouchableComponent: Pressable,
+                triggerTouchable: {
+                  style: ({ hovered }: { hovered?: boolean }) => ({
+                    backgroundColor: hovered ? "rgba(128, 128, 128, 0.2)" : "transparent",
+                    paddingHorizontal: 10,
+                    borderRadius: 6,
+                  }),
+                },
+              }}
+              text="Explorer View"
+            />
+            <MenuOptions optionsContainerStyle={{ marginTop: 16 }}>
+              <MenuOption>
+                <Text
+                  style={{
+                    color: "#9c9c9cff",
+                    fontFamily: "SpaceMono",
+                  }}
+                >
+                  Filter Options
+                </Text>
+              </MenuOption>
+              <MenuOption>
+                <Text
+                  style={{
+                    color: "#9c9c9cff",
+                    fontFamily: "SpaceMono",
+                  }}
+                >
+                  Sort Options
+                </Text>
+              </MenuOption>
+              <MenuOption>
+                <Text
+                  style={{
+                    color: "#9c9c9cff",
+                    fontFamily: "SpaceMono",
+                  }}
+                >
+                  View Options
+                </Text>
+              </MenuOption>
+            </MenuOptions>
+          </Menu>
         )}
       </View>
       {page === "playing" || page === "home" ? null : (

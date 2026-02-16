@@ -12,6 +12,7 @@ import PlaybackProvider from "@/components/PlaybackProvider";
 import DrawerProvider, { useDrawer } from "@/components/DrawerProvider";
 import FocusedItemProvider from "@/components/FocusedItemProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { MenuProvider } from "react-native-popup-menu";
 
 // Disable reanimated warnings, may not be useful. I got it from the template project
 configureReanimatedLogger({
@@ -156,15 +157,17 @@ export default function RootLayout() {
   return (
     <>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <AudioPlayerProvider>
-          <PlaybackProvider>
-            <FocusedItemProvider>
-              <DrawerProvider>
-                <DrawerContent />
-              </DrawerProvider>
-            </FocusedItemProvider>
-          </PlaybackProvider>
-        </AudioPlayerProvider>
+        <MenuProvider>
+          <AudioPlayerProvider>
+            <PlaybackProvider>
+              <FocusedItemProvider>
+                <DrawerProvider>
+                  <DrawerContent />
+                </DrawerProvider>
+              </FocusedItemProvider>
+            </PlaybackProvider>
+          </AudioPlayerProvider>
+        </MenuProvider>
       </GestureHandlerRootView>
     </>
   );
