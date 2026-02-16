@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/shagia/finale/refs/heads/main/public/images/readme/hero1.png" alt="Finale logo" width="100%">
 </p>
 
-<div style="padding-bottom: 13px" align="center">
+<div style="padding-bottom: 10px" align="center">
 🎶 
 <span style="padding-right:10px"></span>
 Listening in Large
