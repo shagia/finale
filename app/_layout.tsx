@@ -120,8 +120,8 @@ function DrawerContent() {
                 padding: 5,
               })}
               onPress={() => {
-                router.navigate("/(tabs)/explorer");
-                closeDrawer();
+                           router.navigate("/(tabs)/explorer");
+     closeDrawer();
               }}
             >
               <Text
@@ -144,8 +144,8 @@ function DrawerContent() {
         }}
       >
         <Stack.Screen name="(tabs)/index" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)/explorer" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)/playing" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)/explorer" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)/test" options={{ headerShown: true }} />
         <Stack.Screen name="+not-found" />
       </Stack>

@@ -1,4 +1,4 @@
-import { Text, View, Image, ScrollView, Pressable } from "react-native";
+import { Text, View, Image, ScrollView, Pressable, Platform } from "react-native";
 import { getAudioPlayer } from "@/scripts/services/audio-service";
 import { useGlobalAudioPlayerStatus } from "@/hooks/useGlobalAudioPlayerStatus";
 import { usePlayback } from "@/components/PlaybackProvider";
@@ -45,8 +45,12 @@ export default function ItemList({
   }, [page, jellyfinApiProp]);
 
   return (
-    <ScrollView pagingEnabled={true}>
-      {list.map((item) => {
+    <ScrollView 
+      pagingEnabled={true}
+      focusable={!Platform.isTV}
+      hasTVPreferredFocus={!Platform.isTV}
+    >
+      {list.map((item, index) => {
         const isCurrent = currentTrack?.Id === item.Id;
         const isFocused = focusedItem?.Id === item.Id;
         const isFavorite = item.UserData?.IsFavorite
@@ -55,6 +59,8 @@ export default function ItemList({
         return (
           <Pressable
             key={item.Id}
+            focusable={true}
+            hasTVPreferredFocus={Platform.isTV && index === 0}
             onPress={async () => {
               // On the home page, items are albums that can be queued. On the playing page, items are tracks belonging to the queue that can be played. Could this be defined better?
               if (page === "home") {
@@ -156,6 +162,7 @@ export default function ItemList({
                 />
                   </View>
                   <Pressable
+                    focusable={!Platform.isTV}
                     onPress={async (e) => {
                       e?.stopPropagation?.();
                       if (!jellyfinApi) return;
