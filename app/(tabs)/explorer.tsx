@@ -25,7 +25,7 @@ import { queueAndPlayAlbum } from "@/scripts/helpers/queueAndPlayAlbum";
 import { refreshItems, loadMoreItems, ITEMS_PAGE_SIZE } from "@/scripts/helpers/refreshItems";
 import Header, { type ViewMode } from "@/components/header";
 import { useFocusedItem } from "@/components/FocusedItemProvider";
-import { useViewMode } from "@/hooks/useViewMode";
+import { useViewMode } from "@/hooks/usePersistedStorage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   getRoundedMinuteFromMicroseconds,
