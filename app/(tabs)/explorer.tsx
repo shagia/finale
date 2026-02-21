@@ -25,6 +25,7 @@ import { queueAndPlayAlbum } from "@/scripts/helpers/queueAndPlayAlbum";
 import { refreshItems, loadMoreItems, ITEMS_PAGE_SIZE } from "@/scripts/helpers/refreshItems";
 import Header, { type ViewMode } from "@/components/header";
 import { useFocusedItem } from "@/components/FocusedItemProvider";
+import { useViewMode } from "@/hooks/useViewMode";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   getRoundedMinuteFromMicroseconds,
@@ -35,11 +36,8 @@ interface ExplorerProps {
   viewMode?: ViewMode;
 }
 
-// For debugging only. Once the functionality for a view setting is added, this will be binded to a localStorage or cookie value
-const defaultViewMode: ViewMode = "flatlist";
-
-export default function Index({ viewMode: initialViewMode = defaultViewMode }: ExplorerProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>(initialViewMode);
+export default function Index({ viewMode: initialViewMode }: ExplorerProps) {
+  const { viewMode, setViewMode } = useViewMode(initialViewMode);
   const [publicURL, setPublicURL] = useState<string | null>(null);
   const [data, setData] = useState<JellyfinItem[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -181,16 +179,17 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
           initialNumToRender={data?.length} // This will soon be tied to a max item variable set by the user
           pagingEnabled={true}
           onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
+          onEndReachedThreshold={0.2}
           contentContainerStyle={{
             gap: 8,
             paddingLeft: 80,
             paddingRight: 80,
-            marginTop: 40,
           }}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <View style={{ borderTopWidth: 0, borderTopColor: "#3C3C3C", borderBottomWidth: 2, borderBottomColor: "#3C3C3C", paddingTop: 0, paddingBottom: 8 }}>
               <Pressable
+                focusable={true}
+                hasTVPreferredFocus={Platform.isTV && index === 0}
                 onPress={async () => {
                   try {
                     const albumItems = await queueAndPlayAlbum(
@@ -310,6 +309,7 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
                         }}
                       >
                         <Pressable
+                          focusable={!Platform.isTV}
                           onPress={async () => {
                             if (!item || !jellyfinApi) return;
                             try {
@@ -392,13 +392,13 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
       )}
       {viewMode === "scrollview" && (
         <ScrollView
-          focusable={true}
+          focusable={!Platform.isTV}
           pagingEnabled={true}
-          hasTVPreferredFocus
+          hasTVPreferredFocus={!Platform.isTV}
           nestedScrollEnabled={Platform.isTV}
           onScroll={({ nativeEvent }) => {
             const { contentOffset, contentSize, layoutMeasurement } = nativeEvent;
-            const padding = 200;
+            const padding = 400;
             const isNearBottom =
               contentOffset.y + layoutMeasurement.height >= contentSize.height - padding;
             if (isNearBottom) handleLoadMore();
@@ -422,7 +422,7 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
             backgroundColor: "#171717",
           }}
         >
-          {data?.map((item) => (
+          {data?.map((item, index) => (
             // So many things wrong here
             // Really lazy way of playing **the first** item, and quickly changing it when you press a new item
             // AND its a static URL. No transcoding support and that's not what I want
@@ -431,6 +431,8 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
             // Worth reviewing the Finamp codebase to see how they handle this
             // In the meantime, it should be time to convert this to a method or a component
             <Pressable
+              focusable={true}
+              hasTVPreferredFocus={Platform.isTV && index === 0}
               onPress={async () => {
                 try {
                   const albumItems = await queueAndPlayAlbum(
@@ -533,6 +535,7 @@ export default function Index({ viewMode: initialViewMode = defaultViewMode }: E
                   </View>
                   {/* TODO: A pressable in a pressable is crazy, maybe this could sit outside the parent pressable? */}
                   <Pressable
+                    focusable={!Platform.isTV}
                     onPress={async () => {
                       if (!item || !jellyfinApi) return;
                       try {

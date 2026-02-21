@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { View, Text, Image, TouchableOpacity, Pressable } from "react-native";
 import { useDrawer } from "./DrawerProvider";
+import { useViewMode } from "@/hooks/usePersistedStorage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   Menu,
@@ -11,6 +12,9 @@ import {
 
 // TODO: The conditional logic for rendering elements here is really lazy. There could be shorter, more readable logic that defines what elements should be rendered based on what page is being viewed.
 
+/** 
+ * Defines the view mode for the explorer page. 
+ * `flatlist` is a list view, `scrollview` is a grid view with scrollable items. */
 export type ViewMode = "flatlist" | "scrollview";
 
 interface HeaderProps {
@@ -22,9 +26,13 @@ interface HeaderProps {
   onRefresh?: () => void | Promise<void>;
 }
 
-export default function Header({ page, pageType, pageTitle, viewMode, onViewModeChange, onRefresh }: HeaderProps) {
+export default function Header({ page, pageType, pageTitle, viewMode: viewModeProp, onViewModeChange, onRefresh }: HeaderProps) {
   const router = useRouter();
   const { openDrawer } = useDrawer();
+  const { viewMode: persistedViewMode, setViewMode: persistedSetViewMode } = useViewMode();
+  const viewMode = viewModeProp ?? persistedViewMode;
+  const setViewMode = onViewModeChange ?? persistedSetViewMode;
+
   return (
     <>
       <View
@@ -127,7 +135,7 @@ export default function Header({ page, pageType, pageTitle, viewMode, onViewMode
                     },
                   }}
                   onSelect={() => {
-                    onViewModeChange?.("scrollview");
+                    setViewMode("scrollview");
                     return false;
                   }}
                 >
@@ -168,7 +176,7 @@ export default function Header({ page, pageType, pageTitle, viewMode, onViewMode
                     },
                   }}
                   onSelect={() => {
-                    onViewModeChange?.("flatlist");
+                    setViewMode("flatlist");
                     return false;
                   }}
                 >
