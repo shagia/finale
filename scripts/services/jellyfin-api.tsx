@@ -48,6 +48,9 @@ class JellyfinAPI {
   private username: string;
   private password: string;
 
+  /** Default page size for library pagination. */
+  static readonly DEFAULT_PAGE_SIZE = 50;
+
   constructor(config: JellyfinConfig) {
     this.axiosInstance = axios.create({
       baseURL: config.baseUrl,
@@ -209,6 +212,63 @@ class JellyfinAPI {
     }
   }
 
+    /**
+     * Get random items from the Jellyfin library with optional pagination.
+     * @param startIndex - Index to start from (0 for first page). Use data.length for "load more".
+     * @param limit - Number of items to return (default DEFAULT_PAGE_SIZE).
+     */
+    async getRandomItems(startIndex = 0, limit = JellyfinAPI.DEFAULT_PAGE_SIZE): Promise<JellyfinItem[]> {
+      await this.ensureAuthenticated();
+      try {
+        const response = await this.axiosInstance.get('/Items', {
+          headers: {
+            'Authorization': `MediaBrowser Token=\"${this.authToken}\"`
+          },
+          params: {
+            UserId: this.userId,
+            IncludeItemTypes: 'MusicAlbum',
+            Recursive: true,
+            StartIndex: startIndex,
+            Limit: limit,
+            SortBy: 'Random',
+            fields: 'MediaStreams, Overview, ProductionYear, RunTimeTicks, AlbumArtist',
+          }
+        });
+  
+        return response.data.Items || [];
+      } catch (error) {
+        throw new Error(`Failed to fetch items: ${error}`);
+      }
+    }
+    /**
+     * Get items by artist from the Jellyfin library with optional pagination.
+     * @param startIndex - Index to start from (0 for first page). Use data.length for "load more".
+     * @param limit - Number of items to return (default DEFAULT_PAGE_SIZE).
+     */
+    async getAlbums(startIndex = 0, sortType: string, limit = JellyfinAPI.DEFAULT_PAGE_SIZE): Promise<JellyfinItem[]> {
+      await this.ensureAuthenticated();
+      try {
+        const response = await this.axiosInstance.get('/Items', {
+          headers: {
+            'Authorization': `MediaBrowser Token=\"${this.authToken}\"`
+          },
+          params: {
+            UserId: this.userId,
+            IncludeItemTypes: 'MusicAlbum',
+            Recursive: true,
+            StartIndex: startIndex,
+            Limit: limit,
+            SortBy: sortType,
+            fields: 'MediaStreams, Overview, ProductionYear, RunTimeTicks, AlbumArtist',
+          }
+        });
+  
+        return response.data.Items || [];
+      } catch (error) {
+        throw new Error(`Failed to fetch items: ${error}`);
+      }
+    }
+
   /**
    * Mark an item as favorite for the current user.
    * Uses Jellyfin endpoint: POST /Users/{UserId}/FavoriteItems/{Id}
@@ -249,38 +309,6 @@ class JellyfinAPI {
       );
     } catch (error) {
       throw new Error(`Failed to remove item from favorites: ${error}`);
-    }
-  }
-
-  /** Default page size for getRandomItems pagination */
-  static readonly RANDOM_ITEMS_PAGE_SIZE = 50;
-
-  /**
-   * Get random items from the Jellyfin library with optional pagination.
-   * @param startIndex - Index to start from (0 for first page). Use data.length for "load more".
-   * @param limit - Number of items to return (default RANDOM_ITEMS_PAGE_SIZE).
-   */
-  async getRandomItems(startIndex = 0, limit = JellyfinAPI.RANDOM_ITEMS_PAGE_SIZE): Promise<JellyfinItem[]> {
-    await this.ensureAuthenticated();
-    try {
-      const response = await this.axiosInstance.get('/Items', {
-        headers: {
-          'Authorization': `MediaBrowser Token=\"${this.authToken}\"`
-        },
-        params: {
-          UserId: this.userId,
-          IncludeItemTypes: 'MusicAlbum',
-          Recursive: true,
-          StartIndex: startIndex,
-          Limit: limit,
-          SortBy: 'Random',
-          fields: 'MediaStreams, Overview, ProductionYear, RunTimeTicks, AlbumArtist',
-        }
-      });
-
-      return response.data.Items || [];
-    } catch (error) {
-      throw new Error(`Failed to fetch items: ${error}`);
     }
   }
 
