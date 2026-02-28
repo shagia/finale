@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { JellyfinItem } from '@/scripts/services/jellyfin-api';
-import { requestAudioPlayback, setOnPlaybackComplete } from '@/scripts/services/audio-service';
+import { requestAudioPlayback, setLockScreenTrack, setOnPlaybackComplete } from '@/scripts/services/audio-service';
 import { useQueue } from '@/hooks/useQueue';
 import { usePlaybackCompletion } from '@/hooks/usePlaybackCompletion';
 import { AUTH_URL } from "@/constants/secrets/auth-headers";
@@ -116,6 +116,13 @@ export default function PlaybackProvider({ children }: { children: React.ReactNo
       setOnPlaybackComplete(null);
     };
   }, [handlePlaybackComplete]);
+
+  /**
+   * Sync current track to lock screen / Now Playing (single source of truth).
+   */
+  useEffect(() => {
+    setLockScreenTrack(currentTrack);
+  }, [currentTrack]);
 
   // Monitor playback completion to trigger callbacks
   usePlaybackCompletion();
