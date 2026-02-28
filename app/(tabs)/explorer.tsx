@@ -44,7 +44,6 @@ export default function Index({ viewMode: initialViewMode }: ExplorerProps) {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const { focusedItem, setFocusedItem } = useFocusedItem();
-  const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
   const [itemOverview, setItemOverview] = useState<string | null>(null);
   const router = useRouter();
 
@@ -101,13 +100,11 @@ export default function Index({ viewMode: initialViewMode }: ExplorerProps) {
   }, []);
 
   /**
-   * Update metadata when current track changes
+   * Update overview when current track changes
    */
   useEffect(() => {
     if (currentTrack) {
-      // Update overview when track changes
       getItemOverview(currentTrack.AlbumId).then(setItemOverview);
-      setAudioMetadata(currentTrack);
     }
   }, [currentTrack]);
   return (
@@ -646,7 +643,7 @@ export default function Index({ viewMode: initialViewMode }: ExplorerProps) {
               </Text>
               <AlbumOverviewWidget
                 itemOverview={itemOverview}
-                audioMetadata={audioMetadata}
+                audioMetadata={currentTrack}
               />
             </View>
           </View>
@@ -663,7 +660,7 @@ export default function Index({ viewMode: initialViewMode }: ExplorerProps) {
               >
                 Now playing
               </Text>
-              <NowPlayingWidget metadata={audioMetadata} />
+              <NowPlayingWidget />
             </View>
           </View>
         </View>

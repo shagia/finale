@@ -32,7 +32,6 @@ export default function HomePage() {
     // ! DO NOT USE THESE CREDENTIALS IN PRODUCTION, replace with a constants file that's ignored !
   });
   const [data, setData] = useState<JellyfinItem[] | null>(null);
-  const [audioMetadata, setAudioMetadata] = useState<JellyfinItem | null>(null);
   const [itemOverview, setItemOverview] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -46,9 +45,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (currentTrack) {
-      // Update overview when track changes
       getItemOverview(currentTrack.AlbumId).then(setItemOverview);
-      setAudioMetadata(currentTrack);
     }
   }, [currentTrack]);
 
@@ -197,7 +194,7 @@ export default function HomePage() {
               </Text>
               <AlbumOverviewWidget
                 itemOverview={itemOverview}
-                audioMetadata={audioMetadata}
+                audioMetadata={currentTrack}
               />
             </View>
           </View>
@@ -214,7 +211,7 @@ export default function HomePage() {
               >
                 Now playing
               </Text>
-              <NowPlayingWidget metadata={audioMetadata} />
+              <NowPlayingWidget />
             </View>
           </View>
         </View>

@@ -1,31 +1,40 @@
-import { Text, View, Image, Pressable, TouchableOpacity } from "react-native";
+import { Text, View, Image, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { getAudioPlayer } from "@/scripts/services/audio-service";
 import { useGlobalAudioPlayerStatus } from "@/hooks/useGlobalAudioPlayerStatus";
-import { JellyfinItem } from "@/scripts/services/jellyfin-api";
 import MarqueeText from "@/components/MarqueeText";
 import { usePlayback } from "@/components/PlaybackProvider";
 import { AUTH_URL } from "@/constants/secrets/auth-headers";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import {
-  getMinute,
-  getRoundedMinute,
-  getSecond,
-} from "@/scripts/helpers/getMinuteValue";
-interface NowPlayingWidgetProps {
-  metadata: JellyfinItem | null;
-}
+import { getRoundedMinute } from "@/scripts/helpers/getMinuteValue";
 
-// TODO: The metadata should also be globally imported instead of fetched as a prop
-export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
+export const NowPlayingWidget = () => {
   const player = getAudioPlayer();
   const status = useGlobalAudioPlayerStatus(player);
-  const { handleNextTrack, handlePreviousTrack } = usePlayback();
+  const { handleNextTrack, handlePreviousTrack, currentTrack } = usePlayback();
   const router = useRouter();
-  //console.log(status);
-  //console.log(`${getMinute(status?.currentTime || 0)}:${getSecond(status?.currentTime || 0)}`);
-  //console.log(metadata);
+  const metadata = currentTrack;
+
+  if (!metadata) {
+    return (
+      <View
+        style={{
+          backgroundColor: "lightgray",
+          flexDirection: "row",
+          minWidth: 200,
+          height: 150,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Text style={{ fontFamily: "IBM Plex Mono", color: "black" }}>
+          Nothing playing
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View
       style={{
@@ -39,7 +48,7 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
         <TouchableOpacity onPress={() => router.navigate("/playing")}>
           <Image
             source={{
-              uri: `${AUTH_URL}/Items/${metadata?.AlbumId}/Images/Primary`, // Replace with base URL variable
+              uri: `${AUTH_URL}/Items/${metadata.AlbumId}/Images/Primary`,
             }}
             style={{ width: 150, height: 150 }}
           />
@@ -55,7 +64,7 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
       >
         <View>
           <MarqueeText
-            text={`${metadata?.Name}`}
+            text={metadata.Name}
             width={250}
             style={{
               fontFamily: "IBM Plex Mono",
@@ -63,7 +72,7 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
             }}
           />
           <MarqueeText
-            text={`${metadata?.AlbumArtist}`}
+            text={metadata.AlbumArtist ?? ""}
             width={250}
             style={{
               fontFamily: "IBM Plex Mono",
@@ -71,7 +80,7 @@ export const NowPlayingWidget = ({ metadata }: NowPlayingWidgetProps) => {
             }}
           />
           <MarqueeText
-            text={`${metadata?.Album}`}
+            text={metadata.Album}
             width={250}
             style={{
               fontFamily: "IBM Plex Mono",
