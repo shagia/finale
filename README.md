@@ -105,7 +105,7 @@ Finale is bit of a 'passion' project with the intent of being an accessible prog
 
 <p style="padding-bottom: 10px">
 <img src="https://raw.githubusercontent.com/jeffvli/feishin/refs/heads/development/assets/icons/icon.png" style="padding: 0 15px 10px 0; float:left" width="100px"></img>
-One of my most used and favorite streamers, and maybe the one that inspired me to design my own just for fun. Really Spotify-esque in functionality and look, nice for if you're looking for a self-hosted streamer that supports more than Jellyfin, but Navidrome *and* the OpenSubsonic API.</p>
+One of my most used and favorite streamers, and maybe the one that inspired me to design my own just for fun. Really Spotify-esque in functionality and look but for self-hosted music, and really nice for if you're looking for a streamer that supports more than Jellyfin, but Navidrome <i>and</i> the OpenSubsonic API too.</p>
 
 #### Finamp (and James Harvey's documentation on the Jellyfin API)
 
